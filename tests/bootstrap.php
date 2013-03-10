@@ -36,7 +36,7 @@ set_include_path(
     ))
 );
 
-function __autoload($className) {
+function autoload($className) {
     if ('\\' == $className[0]) {
         $className = substr($className, 1);
     }
@@ -51,8 +51,8 @@ function __autoload($className) {
         $className = $className;
     }
 
-    if (substr($classPath, 0, 5) == 'Rca') {
-        $classPath = substr($classPath, 6);
+    if (substr($classPath, 0, 3) == 'Rca') {
+        $classPath = substr($classPath, 4);
     }
     $classPath .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
     $paths = explode(PATH_SEPARATOR, get_include_path());
@@ -69,5 +69,5 @@ function __autoload($className) {
     }
     return false;
 };
-
+spl_autoload_register('autoload', true);
 ini_set('error_reporting', E_ALL | E_STRICT);

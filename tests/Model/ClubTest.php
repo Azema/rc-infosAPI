@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Model/Club.php';
-
 /**
  * @group Model
  */
@@ -37,8 +35,8 @@ class ClubTest extends PHPUnit_Framework_TestCase
 			'gps' => '48.0978,-1.6497',
 			'siteWeb' => 'http://cpbvrc.eklablog.com/',
 			'leagueId' => 4,
-			'createAt' => '2013-03-10 01:31:00',
-			'updateAt' => '2013-03-10 01:35:00',
+			'createdAt' => '2013-03-10 01:31:00',
+			'updatedAt' => '2013-03-10 01:35:00',
 		);
 		foreach ($properties as $key => $value) {
 			$this->assertNull($this->_object->{$key});
@@ -60,8 +58,8 @@ class ClubTest extends PHPUnit_Framework_TestCase
 			'gps' => '48.0978,-1.6497',
 			'siteWeb' => 'http://cpbvrc.eklablog.com/',
 			'leagueId' => 4,
-			'createAt' => '2013-03-10 01:31:00',
-			'updateAt' => '2013-03-10 01:35:00',
+			'createdAt' => '2013-03-10 01:31:00',
+			'updatedAt' => '2013-03-10 01:35:00',
 		);
 		$actual = $this->_object->fillFromArray($properties);
 		$this->assertInstanceof('\Rca\Model\Club', $actual);
@@ -69,5 +67,19 @@ class ClubTest extends PHPUnit_Framework_TestCase
 		foreach ($properties as $key => $value) {
 			$this->assertSame($value, $actual->{$key});
 		}
-	}
+    }
+
+    public function testIsAffiliated()
+    {
+        $this->assertFalse($this->_object->isAffiliated());
+        $this->_object->leagueId = 1;
+        $this->assertTrue($this->_object->isAffiliated());
+    }
+
+    public function testIsLocated()
+    {
+        $this->assertFalse($this->_object->isLocated());
+        $this->_object->gps = '48.0978,-1.6497';
+        $this->assertTrue($this->_object->isLocated());
+    }
 }

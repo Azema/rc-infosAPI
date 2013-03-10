@@ -109,5 +109,25 @@ class Club extends AbstractModel
 	 *
 	 * @var string
 	 */
-	protected $updatedAt;
+    protected $updatedAt;
+
+    /**
+     * Indique si le club est affilié à une ligue
+     *
+     * @return boolean
+     */
+    public function isAffiliated()
+    {
+        return !empty($this->leagueId);
+    }
+
+    /**
+     * Indique si le club est géolocalisé
+     *
+     * @return boolean
+     */
+    public function isLocated()
+    {
+        return !empty($this->gps);
+    }
 }

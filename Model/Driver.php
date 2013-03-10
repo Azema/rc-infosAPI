@@ -104,7 +104,7 @@ class Driver extends AbstractModel
 	 */
 	public function isLicensee()
 	{
-		return !empty($this->licence);
+		return !empty($this->license);
 	}
 
 	/**
@@ -123,7 +123,17 @@ class Driver extends AbstractModel
 	 * @return string
 	 */
 	public function __toString()
-	{
-		return $this->firstName . ' ' . $this->lastName;
+    {
+        $string = '';
+        if (!empty($this->firstName)) {
+            $string .= $this->firstName;
+        }
+        if (!empty($this->lastName)) {
+            if (!empty($string)) {
+                $string .= ' ';
+            }
+            $string .= $this->lastName;
+        }
+		return $string;
 	}
 }

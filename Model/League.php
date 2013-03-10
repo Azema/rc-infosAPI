@@ -102,5 +102,22 @@ class League extends AbstractModel
 	 *
 	 * @var string
 	 */
-	protected $updatedAt;
+    protected $updatedAt;
+
+    /**
+     * Les clubs de la ligue
+     *
+     * @var array
+     */
+    protected $clubs = array();
+
+    /**
+     * Indique si la ligue possède des clubs
+     *
+     * @return boolean
+     */
+    public function hasClubs()
+    {
+        return !empty($this->clubs);
+    }
 }

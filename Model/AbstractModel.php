@@ -36,9 +36,9 @@ abstract class AbstractModel
 		$method = 'set' . ucfirst($name);
 		if (method_exists($this, $method)) {
 			$this->{$method}($value);
-		} else {
-			$this->$name = $value;
-		}
+        } elseif (property_exists($this, $name)) {
+            $this->{$name} = $value;
+        }
 	}
 
 	/**
@@ -58,7 +58,33 @@ abstract class AbstractModel
 			return $this->{$name};
 		}
 		return null;
-	}
+    }
+
+    /**
+     * Remet la propriété à null
+     *
+     * @param string $name La propriété
+     *
+     * @return void
+     */
+    public function __unset($name)
+    {
+        if (property_exists($this, $name)) {
+            $this->{$name} = null;
+        }
+    }
+
+    /**
+     * Indique si la propriété existe dans l'objet
+     *
+     * @param string $name Le nom de la propriété
+     *
+     * @return boolean
+     */
+    public function __isset($name)
+    {
+        return isset($this->{$name});
+    }
 
 	/**
 	 * Rempli l'objet courant à partir d'un tableau de données
@@ -69,7 +95,7 @@ abstract class AbstractModel
 	 */
 	public function fillFromArray($data)
 	{
-		foreach ($data as $key => $value) {
+        foreach ($data as $key => $value) {
 			$this->{$key} = $value;
 		}
 		return $this;
