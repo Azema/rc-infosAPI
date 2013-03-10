@@ -1,0 +1,75 @@
+CREATE TABLE `clubs` (
+  `clb_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `clb_name` varchar(255) NOT NULL,
+  `clb_address` varchar(255) DEFAULT NULL,
+  `clb_postCode` varchar(255) DEFAULT NULL,
+  `clb_city` varchar(255) DEFAULT NULL,
+  `clb_email` varchar(255) DEFAULT NULL,
+  `clb_phone` varchar(255) DEFAULT NULL,
+  `clb_gps` varchar(255) DEFAULT NULL,
+  `clb_siteWeb` varchar(255) DEFAULT NULL,
+  `clb_createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `clb_updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `clb_leg_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`clb_id`),
+  KEY `clubs_ibfk_clb_leg_id` (`clb_leg_id`),
+  CONSTRAINT `clubs_ibfk_clb_leg_id` FOREIGN KEY (`clb_leg_id`) REFERENCES `leagues` (`leg_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `drivers` (
+  `drv_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `drv_license` varchar(255) DEFAULT NULL,
+  `drv_license_type` varchar(255) DEFAULT NULL,
+  `drv_firstname` varchar(255) DEFAULT NULL,
+  `drv_lastname` varchar(255) DEFAULT NULL,
+  `drv_email` varchar(255) DEFAULT NULL,
+  `drv_phone` varchar(255) DEFAULT NULL,
+  `drv_clb_id` int(11) unsigned DEFAULT NULL,
+  `drv_createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `drv_updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`drv_id`),
+  KEY `drivers_ibfk_drv_clb_id` (`drv_clb_id`),
+  CONSTRAINT `drivers_ibfk_drv_clb_id` FOREIGN KEY (`drv_clb_id`) REFERENCES `clubs` (`clb_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `leagues` (
+  `leg_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `leg_name` varchar(255) DEFAULT NULL,
+  `leg_president` varchar(255) DEFAULT NULL,
+  `leg_address` varchar(255) DEFAULT NULL,
+  `leg_postCode` varchar(255) DEFAULT NULL,
+  `leg_city` varchar(255) DEFAULT NULL,
+  `leg_email` varchar(255) DEFAULT NULL,
+  `leg_phone` varchar(255) DEFAULT NULL,
+  `leg_siteWeb` varchar(255) DEFAULT NULL,
+  `leg_createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `leg_updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`leg_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `schema_migrations` (
+  `version` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `idx_schema_migrations_version` (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tracks` (
+  `trk_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `trk_clb_id` int(11) unsigned NOT NULL,
+  `trk_type` varchar(255) DEFAULT NULL,
+  `trk_motors` varchar(255) DEFAULT NULL,
+  `trk_coating` varchar(255) DEFAULT NULL,
+  `trk_length` smallint(6) DEFAULT NULL,
+  `trk_scale` smallint(6) DEFAULT NULL,
+  `trk_scales` varchar(255) DEFAULT NULL,
+  `trk_address` varchar(255) DEFAULT NULL,
+  `trk_postCode` varchar(255) DEFAULT NULL,
+  `trk_city` varchar(255) DEFAULT NULL,
+  `trk_gps` varchar(255) DEFAULT NULL,
+  `trk_equipments` varchar(255) DEFAULT NULL,
+  `trk_createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `trk_updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`trk_id`),
+  KEY `tracks_ibfk_trk_clb_id` (`trk_clb_id`),
+  CONSTRAINT `tracks_ibfk_trk_clb_id` FOREIGN KEY (`trk_clb_id`) REFERENCES `clubs` (`clb_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

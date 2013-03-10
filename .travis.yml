@@ -4,5 +4,20 @@ php:
     - 5.3
     - 5.4
 
+mysql:
+  adapter: mysql2
+  database: phigrate_test
+  username: phigrate_test
+  encoding: utf8
+
+before_script:
+  - mysql -u root -e 'create database rcinfos_test;'
+  - mysql -u root -e "CREATE USER 'rcinfos'@'localhost' IDENTIFIED BY 'rcinfos';"
+  - mysql -u root -e "GRANT ALL PRIVILEGES ON rcinfos_test.* TO  'rcinfos'@'localhost';"
+  - mysql -u root rcinfos_test < config/db/migrate/schema.txt
+  - cp tests/fixtures/config/environment.php config/environment.php
+
 script:
-    - phpunit --configuration tests/phpunit-travis.xml --coverage-test
+  - curl -s https://getcomposer.org/installer | php --
+  - php composer.phar install
+  - phpunit --configuration tests/phpunit-travis.xml --coverage-test
