@@ -3,3 +3,4 @@ build/logs
 logs/*.log
 *.swp
 *.swo
+vendor/*

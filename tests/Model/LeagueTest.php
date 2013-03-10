@@ -1,9 +1,11 @@
 <?php
 
+namespace Rca\Model;
+
 /**
  * @group Model
  */
-class LeagueTest extends PHPUnit_Framework_TestCase
+class LeagueTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var \Rca\Model\League

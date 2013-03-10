@@ -1,9 +1,11 @@
 <?php
 
+namespace Rca\Model;
+
 /**
  * @group Model
  */
-class DriverTest extends PHPUnit_Framework_TestCase
+class DriverTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var \Rca\Model\Driver

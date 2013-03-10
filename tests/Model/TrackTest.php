@@ -1,9 +1,11 @@
 <?php
 
+namespace Rca\Model;
+
 /**
  * @group Model
  */
-class TrackTest extends PHPUnit_Framework_TestCase
+class TrackTest extends \PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var \Rca\Model\Track
@@ -28,7 +30,7 @@ class TrackTest extends PHPUnit_Framework_TestCase
 			'id' => 4,
             'clubId' => 14,
             'type' => 'TT',
-            'motors' => 'brushless,thermique',
+            'motors' => array('brushless','thermique'),
             'coating' => 'terre,moquette',
             'length' => 120,
             'width' => 4,
@@ -40,8 +42,12 @@ class TrackTest extends PHPUnit_Framework_TestCase
 			'createdAt' => '2013-03-10 01:31:00',
 			'updatedAt' => '2013-03-10 01:35:00',
 		);
-		foreach ($properties as $key => $value) {
-			$this->assertNull($this->_object->{$key});
+        foreach ($properties as $key => $value) {
+            if (is_array($value)) {
+                $this->assertEmpty($this->_object->{$key});
+            } else {
+                $this->assertNull($this->_object->{$key});
+            }
 			$this->_object->{$key} = $value;
 			$this->assertSame($value, $this->_object->{$key});
         }
@@ -56,7 +62,7 @@ class TrackTest extends PHPUnit_Framework_TestCase
 			'id' => 4,
             'clubId' => 14,
             'type' => 'TT',
-            'motors' => 'brushless,thermique',
+            'motors' => array('brushless','thermique'),
             'coating' => 'terre,moquette',
             'length' => 120,
             'width' => 4,
@@ -85,7 +91,24 @@ class TrackTest extends PHPUnit_Framework_TestCase
     public function testIsLocated()
     {
         $this->assertFalse($this->_object->isLocated());
-        $this->_object->gps = '48.0978,-1.6497';
+        $this->_object->gps = '48.10203,-1.42849';
         $this->assertTrue($this->_object->isLocated());
+    }
+
+    public function testHasClub()
+    {
+        $this->assertFalse($this->_object->hasClub());
+        $this->_object->clubId = 1;
+        $this->assertTrue($this->_object->hasClub());
+    }
+
+    public function testMotorAllowed()
+    {
+        $this->assertFalse($this->_object->motorAllowed('brushless'));
+        $this->_object->addMotor('brushless');
+        $this->assertTrue($this->_object->motorAllowed('brushless'));
+        $this->assertFalse($this->_object->motorAllowed('thermique'));
+        $this->_object->addMotor('thermique');
+        $this->assertTrue($this->_object->motorAllowed('thermique'));
     }
 }

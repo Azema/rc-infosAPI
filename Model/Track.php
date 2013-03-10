@@ -51,9 +51,9 @@ class Track extends AbstractModel
 	/**
 	 * Types de moteurs autorisés
 	 *
-	 * @var string
+	 * @var array
 	 */
-	protected $motors;
+	protected $motors = array();
 
 	/**
 	 * Revêtement de la piste
@@ -126,6 +126,42 @@ class Track extends AbstractModel
     protected $updatedAt;
 
     /**
+     * Le club à lequel est rattaché la piste
+     *
+     * @var \Rca\Model\Club
+     */
+    protected $club;
+
+    /**
+     * Permet de définir les moteurs autorisés sur la piste
+     *
+     * @param array $motors Les types de moteurs
+     *
+     * @return \Rca\Model\Track
+     */
+    public function setMotors(array $motors = array())
+    {
+        $this->motors = (array)$motors;
+        return $this;
+    }
+
+    /**
+     * Permet d'ajouter un ou plusieurs moteurs
+     *
+     * @param string|array $motors Le(s) type(s) de moteur(s)
+     *
+     * @return \Rca\Model\Track
+     */
+    public function addMotor($motor)
+    {
+        if (is_string($motor)) {
+            $motor = array($motor);
+        }
+        $this->motors = array_merge($this->motors, $motor);
+        return $this;
+    }
+
+    /**
      * Indique si le club est géolocalisé
      *
      * @return boolean
@@ -133,5 +169,27 @@ class Track extends AbstractModel
     public function isLocated()
     {
         return !empty($this->gps);
+    }
+
+    /**
+     * Indique si la piste est rattachée à un club
+     *
+     * @return boolean
+     */
+    public function hasClub()
+    {
+        return !empty($this->clubId);
+    }
+
+    /**
+     * Indique si le moteur passé en paramètre est autorisé sur la piste
+     *
+     * @param string $motor Le type de moteur
+     *
+     * @return boolean
+     */
+    public function motorAllowed($motor)
+    {
+        return in_array((string)$motor, $this->motors);
     }
 }
