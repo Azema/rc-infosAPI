@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+  backupStaticAttributes="false"
+  colors="true" convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true" convertWarningsToExceptions="true"
+  processIsolation="false" stopOnFailure="false" syntaxCheck="true"
+  bootstrap="./bootstrap.php">
+  <testsuite name="Rca">
+    <directory suffix="Test.php">.</directory>
+  </testsuite>
+
+  <filter>
+    <whitelist>
+      <directory suffix=".php">../Api</directory>
+      <directory suffix=".php">../Db</directory>
+      <directory suffix=".php">../Model</directory>
+      <directory suffix=".php">../Service</directory>
+      <directory suffix=".php">../Validator</directory>
+    </whitelist>
+  </filter>
+
+  <logging>
+    <log type="coverage-html" target="../build/coverage" charset="UTF-8"
+      yui="true" highlight="true" lowUpperBound="50" highLowerBound="80" />
+    <log type="coverage-clover" target="../build/logs/clover.xml"/>
+    <log type="junit" target="../build/logs/junit.xml" logIncompleteSkipped="false"/>
+  </logging>
+</phpunit>
