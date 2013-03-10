@@ -1,3 +1,5 @@
+SET foreign_key_checks = 0;
+
 CREATE TABLE `clubs` (
   `clb_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `clb_name` varchar(255) NOT NULL,
@@ -73,3 +75,4 @@ CREATE TABLE `tracks` (
   CONSTRAINT `tracks_ibfk_trk_clb_id` FOREIGN KEY (`trk_clb_id`) REFERENCES `clubs` (`clb_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+SET foreign_key_checks = 1;
