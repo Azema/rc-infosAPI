@@ -13,7 +13,7 @@ namespace Rca\Db;
 /**
  * @see \Rca\Db\AbstractDb
  */
-require_once 'Db/AbstractDb.php';
+//require_once 'Db/AbstractDb.php';
 
 /**
  * Classe abstraite des classes de tables de BDD
@@ -25,15 +25,13 @@ require_once 'Db/AbstractDb.php';
  * @license   https://github.com/Azema/rc-infosAPI/LICENCE New BSD License
  * @copyright Copyright (c) 2013 Manuel Hervo. (https://github.com/Azema)
  */
-class Clubs extends AbstractDb
+class Clubs extends \Rca\Db\Table\AbstractDb
 {
 	protected $_name = 'clubs';
 
-	protected $_modelClass = '\Rca\Model\Club';
+	protected $_rowClass = '\Rca\Model\Club';
 
-	public function __construct()
-	{
-		parent::__construct();
-		$this->_map['clb_leg_id'] = 'leagueId';
-	}
+	protected $_customMap = array(
+		'clb_leg_id' => 'leagueId',
+	);
 }

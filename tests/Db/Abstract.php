@@ -13,15 +13,19 @@ abstract class AbstractTestDb extends \PHPUnit_Framework_TestCase
 
 	public static function setUpBeforeClass()
 	{
-		$config = include ENVIRONMENT_PATH;
-		$pdo = getPdo($config);
+		$pdo = \Rca\Db\Table\AbstractDb::getDefaultAdapter()->getConnection();
 		self::$_phactory = new Phactory($pdo);
-		\Rca\Db\AbstractDb::setAdapter($pdo);
+	}
+
+	public static function tearDownAfterClass()
+	{
+		self::$_phactory->reset();
+		parent::tearDownAfterClass();
 	}
 
 	protected function tearDown()
 	{
-		self::$_phactory->reset();
+		self::$_phactory->recall();
 		$this->_object = null;
 		parent::tearDown();
 	}

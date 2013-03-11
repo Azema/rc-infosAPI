@@ -59,7 +59,7 @@ class DriverTest extends \PHPUnit_Framework_TestCase
 			'createdAt' => '2013-03-10 01:31:00',
 			'updatedAt' => '2013-03-10 01:35:00',
 		);
-        $actual = $this->_object->fillFromArray($properties);
+        $actual = $this->_object->setFromArray($properties);
         $this->assertInstanceof('\Rca\Model\Driver', $actual);
         $this->assertSame($this->_object, $actual);
         foreach ($properties as $key => $value) {

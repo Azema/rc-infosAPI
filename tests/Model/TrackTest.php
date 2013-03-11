@@ -75,7 +75,7 @@ class TrackTest extends \PHPUnit_Framework_TestCase
             'updatedAt' => '2013-03-10 01:35:00',
             'wrong' => 'unknown',
 		);
-		$actual = $this->_object->fillFromArray($properties);
+		$actual = $this->_object->setFromArray($properties);
 		$this->assertInstanceof('\Rca\Model\Track', $actual);
 		$this->assertSame($this->_object, $actual);
         foreach ($properties as $key => $value) {

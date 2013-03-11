@@ -22,6 +22,14 @@ namespace Rca\Model;
  */
 abstract class AbstractModel
 {
+	public function __construct($data = array())
+	{
+		if (is_array($data)) {
+			if (array_key_exists('data', $data)) {
+				$this->setFromArray($data['data']);
+			}
+		}
+	}
 	/**
 	 * Méthode magique pour définir les valeurs des propriétés du modèle
 	 * Appelle les méthodes setter si elles existent
@@ -93,7 +101,7 @@ abstract class AbstractModel
 	 *
 	 * @return \Rca\Model\AbstractModel
 	 */
-	public function fillFromArray($data)
+	public function setFromArray($data)
 	{
         foreach ($data as $key => $value) {
 			$this->{$key} = $value;
