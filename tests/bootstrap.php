@@ -8,19 +8,16 @@
  * @copyright Copyright (c) 2013 Manuel Hervo. (https://github.com/Azema)
  */
 
-defined('APPLICATION_PATH') || define(
-    'APPLICATION_PATH',
-    realpath(dirname(__FILE__) . '/../')
-);
-
-defined('ENVIRONMENT_PATH') || define(
-    'ENVIRONMENT_PATH',
-    (getenv('ENVIRONMENT_PATH') ? getenv('ENVIRONMENT_PATH') : APPLICATION_PATH . '/config/environment.php')
-);
+define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../'));
 
 define('TEST_PATH', dirname(__FILE__));
 
 define('FIXTURES_PATH', dirname(__FILE__) . '/fixtures/');
+
+defined('ENVIRONMENT_PATH') || define(
+    'ENVIRONMENT_PATH',
+    (getenv('ENVIRONMENT_PATH') ? getenv('ENVIRONMENT_PATH') : FIXTURES_PATH . '/config/environment.php')
+);
 
 // Define application environment
 defined('APPLICATION_ENV') || define(

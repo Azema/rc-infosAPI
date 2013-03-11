@@ -60,18 +60,51 @@ class ClubsTest extends AbstractTestDb
 
 	public function testFetchAll()
 	{
-		// create 20 clubs
+		$nbClubs = 5;
         $clubs = array();
         $league = self::$_phactory->create('league');
-        for($i = 1; $i <= 20; $i++) {
+        for($i = 1; $i <= $nbClubs; $i++) {
             // create a row in the db with age = $i, and store a Phactory_Row object
             $clubs[] = self::$_phactory->createWithAssociations('club', array('league' => $league));
         }
         $actual = $this->_object->fetchAll();
         $this->assertNotEmpty($actual);
-        $this->assertEquals(20, count($actual));
+        $this->assertEquals($nbClubs, count($actual));
         foreach ($actual as $object) {
         	$this->assertInstanceof('\Rca\Model\Club', $object);
         }
+	}
+
+	public function testFetchOne()
+	{
+		$email = 'cpbracing35@free.fr';
+        $league = self::$_phactory->create('league');
+		$club = self::$_phactory->createWithAssociations('club', array('league' => $league));
+		$actual = $this->_object->fetchOne(array('email' => $email));
+    	$this->assertInstanceof('\Rca\Model\Club', $actual);
+		$this->assertEquals($email, $actual->email);
+		$actual = $this->_object->fetchOne(array('email' => 'wrong'));
+		$this->assertFalse($actual);
+	}
+
+	public function testFetch()
+	{
+		$nbClubs = 3;
+		$clubs = array();
+        $league = self::$_phactory->create('league');
+        for($i = 1; $i <= $nbClubs; $i++) {
+            // create a row in the db with age = $i, and store a Phactory_Row object
+            $clubs[] = self::$_phactory->createWithAssociations('club', array('league' => $league));
+        }
+		$actual = $this->_object->fetch(array('leagueId' => $league->leg_id));
+		$this->assertNotEmpty($actual);
+		$this->assertEquals($nbClubs, count($actual));
+		foreach ($actual as $club) {
+			$this->assertInstanceof('\Rca\Model\Club', $club);
+			$this->assertEquals($league->leg_id, $club->leagueId);
+		}
+		$actual = $this->_object->fetch(array('leagueId' => 9999999));
+		$this->assertInternalType('array', $actual);
+		$this->assertEmpty($actual);
 	}
 }

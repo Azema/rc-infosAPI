@@ -21,7 +21,7 @@ abstract class AbstractTestDb extends \PHPUnit_Framework_TestCase
 
 	protected function tearDown()
 	{
-		self::$_phactory->reset();
+		self::$_phactory->recall();
 		$this->_object = null;
 		parent::tearDown();
 	}
