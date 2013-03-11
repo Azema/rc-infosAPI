@@ -133,18 +133,70 @@ abstract class AbstractDb
         self::$_adapter = $adapter;
     }
 
+    /**
+     * Retourne l'ensemble des enregistrements de la table
+     *
+     * @return \Rca\Model\AbstractModel[]
+     */
     public function fetchAll()
     {
-        $query = 'SELECT ' . $this->_mapColumns() . ' FROM ' . $this->quoteIdentifier($this->_name) . ' WHERE 1';
-        var_dump($query);
-        $stmt = $this->_db->query($query);
+        $stmt = $this->_query();
         if (!$stmt) {
             return array();
         }
         return $stmt->fetchAll(\PDO::FETCH_CLASS, $this->_modelClass);
     }
 
-    protected function _mapColumns($columns = array())
+    /**
+     * Retourne le premier enregistrement trouvé dans la table
+     *
+     * @param array $where Tableau clef valeur pour la clause where
+     *
+     * @return \Rca\Model\AbstractModel
+     */
+    public function fetchOne($where = array())
+    {
+        $stmt = $this->_query($where);
+        if (!$stmt) {
+            return false;
+        }
+        return $stmt->fetchObject($this->_modelClass);
+    }
+
+    /**
+     * Retourne tous les enregistrements trouvé correspondant à la clause $where dans la table
+     *
+     * @param array $where Tableau clef valeur pour la clause where
+     *
+     * @return \Rca\Model\AbstractModel[]
+     */
+    public function fetch($where = array())
+    {
+        $stmt = $this->_query($where);
+        if (!$stmt) {
+            return array();
+        }
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, $this->_modelClass);
+    }
+
+    protected function _query($where = array(), $columns = array())
+    {
+        $query = 'SELECT ' . $this->_mapSelectColumns($columns) . ' FROM '
+            . $this->quoteIdentifier($this->_name) . ' WHERE '
+            . $this->_mapWhereColumns($where) . ';';
+        $stmt = $this->_db->query($query);
+        return $stmt;
+    }
+
+    /**
+     * Définit le nom des colonnes à récuperer pour remplir l'objet modèle
+     * pour les requêtes SQL
+     *
+     * @param array $columns Les colonnes souhaitées
+     *
+     * @return string
+     */
+    protected function _mapSelectColumns($columns = array())
     {
         if (empty($columns)) {
             $columns = array_values($this->_map);
@@ -157,6 +209,28 @@ abstract class AbstractDb
             $selectColumns[] = $this->quoteIdentifier($colName) . ' AS ' . $this->_db->quote($name);
         }
         return implode(',', $selectColumns);
+    }
+
+    /**
+     * Définit la clause where à partir des noms de colonnes et des valeurs recherchées.
+     *
+     * @param array $columns Tableau clef valeur des elements recherchés
+     *
+     * @return string
+     */
+    protected function _mapWhereColumns($columns = array())
+    {
+        $columnNames = array_intersect($this->_map, array_keys($columns));
+        $keyColumns = array_flip($this->_map);
+        if (empty($columnNames)) {
+            return '1';
+        }
+        $whereColumns = array();
+        foreach ($columnNames as $column) {
+            $whereColumns[] = $this->quoteIdentifier($keyColumns[$column]) 
+                . ' = ' . $this->_db->quote($columns[$column]);
+        }
+        return implode(' AND ', $whereColumns);
     }
 
     /**
@@ -173,7 +247,8 @@ abstract class AbstractDb
     }
 
     /**
-     * Initialise les metadata.
+     * Initialise les metadata, la table de mapping des colonnes
+     * et les clefs primaires.
      *
      * @return void
      */
