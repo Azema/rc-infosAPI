@@ -43,7 +43,7 @@ require_once 'Zend/Db/Adapter/Pdo/Mysql.php';
 $db = new \Zend_Db_Adapter_Pdo_Mysql($config['db']);
 $pdo = $db->getConnection();
 $pdo->exec(file_get_contents(APPLICATION_PATH . '/config/db/migrate/schema.txt'));
-\Rca\Db\Table\AbstractDb::setDefaultAdapter($db);
+\Rca\Db\AbstractDb::setDefaultAdapter($db);
 
 $frontendOptions = array('automatic_serialization' => true);
  
@@ -53,4 +53,4 @@ $cache = \Zend_Cache::factory('Core',
                              'File',
                              $frontendOptions,
                              $backendOptions);
-\Rca\Db\Table\AbstractDb::setDefaultMetadataCache($cache);
+\Rca\Db\AbstractDb::setDefaultMetadataCache($cache);

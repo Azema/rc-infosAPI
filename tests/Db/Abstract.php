@@ -13,7 +13,7 @@ abstract class AbstractTestDb extends \PHPUnit_Framework_TestCase
 
 	public static function setUpBeforeClass()
 	{
-		$pdo = \Rca\Db\Table\AbstractDb::getDefaultAdapter()->getConnection();
+		$pdo = \Rca\Db\AbstractDb::getDefaultAdapter()->getConnection();
 		self::$_phactory = new Phactory($pdo);
 	}
 

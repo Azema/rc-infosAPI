@@ -80,10 +80,10 @@ class ClubsTest extends AbstractTestDb
 		$email = 'cpbracing35@free.fr';
         $league = self::$_phactory->create('league');
 		$club = self::$_phactory->createWithAssociations('club', array('league' => $league));
-		$actual = $this->_object->fetchRow(array('email = ?' => $email));
+		$actual = $this->_object->fetchOne(array('email' => $email));
     	$this->assertInstanceof('\Rca\Model\Club', $actual);
 		$this->assertEquals($email, $actual->email);
-		$actual = $this->_object->fetchRow(array('email = ?' => 'wrong'));
+		$actual = $this->_object->fetchOne(array('email' => 'wrong'));
 		$this->assertFalse($actual);
 	}
 
@@ -96,15 +96,15 @@ class ClubsTest extends AbstractTestDb
             // create a row in the db with age = $i, and store a Phactory_Row object
             $clubs[] = self::$_phactory->createWithAssociations('club', array('league' => $league));
         }
-		$actual = $this->_object->fetchAll(array('leagueId = ?' => $league->leg_id));
+		$actual = $this->_object->fetchAll(array('leagueId' => $league->leg_id));
 		$this->assertNotEmpty($actual);
 		$this->assertEquals($nbClubs, count($actual));
 		foreach ($actual as $club) {
 			$this->assertInstanceof('\Rca\Model\Club', $club);
 			$this->assertEquals($league->leg_id, $club->leagueId);
 		}
-		$actual = $this->_object->fetchAll(array('leagueId = ?' => 9999999));
-		$this->assertInstanceof('\Zend_Db_Table_Rowset', $actual);
+		$actual = $this->_object->fetchAll(array('leagueId' => 9999999));
+		$this->assertInternalType('array', $actual);
 		$this->assertEquals(0, count($actual));
 	}
 
@@ -114,9 +114,6 @@ class ClubsTest extends AbstractTestDb
         // create a row in the db with age = $i, and store a Phactory_Row object
         $club = self::$_phactory->createWithAssociations('club', array('league' => $league));
         $actual = $this->_object->find($club->clb_id);
-        $this->assertInstanceof('\Zend_Db_Table_Rowset', $actual);
-        $this->assertEquals(1, count($actual));
-        $actual = $actual->current();
         $this->assertInstanceof('\Rca\Model\Club', $actual);
 		$this->assertEquals($club->clb_id, $actual->id);
 	}
