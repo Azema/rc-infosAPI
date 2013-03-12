@@ -25,13 +25,15 @@ namespace Rca\Db;
  * @license   https://github.com/Azema/rc-infosAPI/LICENCE New BSD License
  * @copyright Copyright (c) 2013 Manuel Hervo. (https://github.com/Azema)
  */
-class Clubs extends \Rca\Db\Table\AbstractDb
+class Clubs extends \Rca\Db\AbstractDb
 {
 	protected $_name = 'clubs';
 
-	protected $_rowClass = '\Rca\Model\Club';
+	protected $_objectName = '\Rca\Model\Club';
 
-	protected $_customMap = array(
-		'clb_leg_id' => 'leagueId',
-	);
+	protected function init()
+	{
+		unset($this->_map['leg_id']);
+		$this->_map['leagueId'] = 'clb_leg_id';
+	}
 }
