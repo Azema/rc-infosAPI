@@ -13,6 +13,7 @@
     <whitelist>
       <directory suffix=".php">../Api</directory>
       <directory suffix=".php">../Db</directory>
+      <directory suffix=".php">../library/Rca</directory>
       <directory suffix=".php">../Model</directory>
       <directory suffix=".php">../Service</directory>
       <directory suffix=".php">../Validator</directory>
