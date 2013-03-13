@@ -36,4 +36,24 @@ class Clubs extends \Rca\Db\AbstractDb
 		unset($this->_map['leg_id']);
 		$this->_map['leagueId'] = 'clb_leg_id';
 	}
+
+	public function insert($data, $ignore = false)
+	{
+		return $this->insertMulti(array($data), $ignore);
+	}
+
+	public function insertMulti($data, $ignore = false)
+	{
+		$primary = reset($this->_primary);
+		foreach ($data as $key => $value) {
+			if (array_key_exists($primary, $value)) {
+				unset($data[$key][$primary]);
+			}
+			$data[$key]['createdAt'] = date('c');
+			if (array_key_exists('updatedAt', $value)) {
+				unset($data[$key]['updatedAt']);
+			}
+		}
+		return parent::insertMulti($data, $ignore);
+	}
 }
