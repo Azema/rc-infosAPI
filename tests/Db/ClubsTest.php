@@ -117,4 +117,50 @@ class ClubsTest extends AbstractTestDb
         $this->assertInstanceof('\Rca\Model\Club', $actual);
 		$this->assertEquals($club->clb_id, $actual->id);
 	}
+
+	public function testCount()
+	{
+		$count = $this->_object->count();
+		$this->assertInternalType('int', $count);
+		$this->assertEquals(0, $count);
+        $league = self::$_phactory->create('league');
+        $club = self::$_phactory->createWithAssociations('club', array('league' => $league));
+		$count = $this->_object->count();
+		$this->assertInternalType('int', $count);
+		$this->assertEquals(1, $count);
+	}
+
+	public function testInsert()
+	{
+        $league = self::$_phactory->create('league');
+		$data = array(
+			'id' => 5,
+			'name' => 'myClub',
+			'address' => 'rue du RC',
+			'postCode' => '29000',
+			'city' => 'Le Grand Canyon',
+			'email' => 'rc@free.fr',
+			'phone' => '0123456789',
+			'gps' => '48.000 -1.000',
+			'leagueId' => $league->leg_id,
+			'createdAt' => '1970-01-01 00:00:00',
+			'updatedAt' => '2036-01-01 00:00:00',
+		);
+		$actual = $this->_object->insert($data);
+		$this->assertInternalType('int', $actual);
+		$this->assertEquals(1, $actual);
+		$club = $this->_object->fetchOne(array('name'=>'myClub'));
+		foreach ($data as $key => $value) {
+			switch ($key) {
+				case 'id':
+				case 'createdAt':
+				case 'updatedAt':
+					$this->assertNotEquals($value, $club->$key);
+					break;
+				default:
+					$this->assertEquals($value, $club->$key);
+					break;
+			}
+		}
+	}
 }
