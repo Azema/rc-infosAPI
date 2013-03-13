@@ -79,6 +79,8 @@ abstract class AbstractDb
         '<',
         '=',
         '>',
+        '<>',
+        '!=',
     );
 
     /**
@@ -435,7 +437,7 @@ abstract class AbstractDb
 
             foreach ($rowData as $key => $value) {
                 if ($value instanceof \Zend_Db_Expr) {
-                    $values[] = $value->__toString();
+                    $values[] = (string)$value;
                 } else {
                     $values[] = '?';
                     $bind[] = $value;
@@ -754,7 +756,7 @@ abstract class AbstractDb
                 }
             } else {
                 //filtre simple
-                switch ((string)$clauseWhere) {
+                switch ($clauseWhere) {
                     case self::OPERATOR_EMPTY:
                     case self::OPERATOR_NOTEMPTY:
                         $result = $this->_getWhereOperation($col, $clauseWhere);
@@ -900,6 +902,25 @@ abstract class AbstractDb
         return $select;
     }
 
+    /**
+     * Permet de quoter les valeurs en récupérant le type de la colonne
+     *
+     * @param string $col   Le nom de la colonne
+     * @param mixed  $value Le valeur à quoter
+     *
+     * @return mixed La valeur quotée
+     */
+    protected function _quote($col, $value)
+    {
+        $type = null;
+        if (array_key_exists($col, $this->_metadata)) {
+            $type = strtoupper($this->_metadata[$col]['DATA_TYPE']);
+        } elseif (false !== ($key = array_search($col, $this->_map))) {
+            $type = strtoupper($this->_metadata[$key]['DATA_TYPE']);
+        }
+        return $this->getDb()->quote($value, $type);
+    }
+
     /******************************************/
     /*          PRIVATE METHODS               */
     /******************************************/
@@ -942,7 +963,7 @@ abstract class AbstractDb
              * Build the UPDATE statement
              */
             $primaryCol = $this->_map[reset($this->_primary)];
-            $where = array($primaryCol . ' IN (' . implode(',', $ids) . ')');
+            $where = array($primaryCol . ' IN (' . $this->_quote($primaryCol, $ids) . ')');
         }
 
         $result = null;
@@ -1051,6 +1072,7 @@ abstract class AbstractDb
     {
         $where = null;
 
+        $colOrig = $col;
         $col = $this->getDb()->quoteIdentifier($this->_getColWithTableName($col));
 
         switch (strtoupper($operator)) {
@@ -1069,14 +1091,20 @@ abstract class AbstractDb
                     }
                     //filtre sur un tableau de valeur (IN): exemple array('1','2','3'); $in = $col . ' IN (' . implode(',', $value) . ')';
                     $firstElement = reset($value);
-                    if (is_string($firstElement) && !empty($firstElement)) {
-                        $where = $col . ' IN (' . $this->getDb()->quote($value) . ')';
-                    } elseif (!is_string($firstElement)) {
-                        $where = $col . ' IN (' . implode(',', $value) . ')';
+                    if ((is_string($firstElement) && !empty($firstElement)) || !is_string($firstElement)) {
+                        $where = $col . ' IN (' . $this->_quote($colOrig, $value) . ')';
                     }
                     break;
-                } elseif (preg_match('/[' . implode('', $this->_operators) . ']/', $value)) {
+                } elseif (
+                    preg_match(
+                        '/^([' . preg_quote(implode('', $this->_operators), '/') . ']{1,2})(.*)$/',
+                        $value, $matches)
+                    )
+                {
                     $where = $col . $value;
+                    if (count($matches) == 3) {
+                        $where = $col . $matches[1] . $this->_quote($colOrig, trim($matches[2]));
+                    }
                     break;
                 }
             case self::OPERATOR_SUPERIOR:
@@ -1084,7 +1112,7 @@ abstract class AbstractDb
             case self::OPERATOR_INFERIOREQUALS:
             case self::OPERATOR_INFERIOR:
             case self::OPERATOR_NOTEQUALS:
-                $where = $col . ' ' . $operator . ' ' . $this->getDb()->quote($value);
+                $where = $col . ' ' . $operator . ' ' . $this->_quote($colOrig, $value);
                 break;
             case self::OPERATOR_EMPTY:
                 $where = $col . ' IS NULL';
@@ -1093,13 +1121,13 @@ abstract class AbstractDb
                 $where = $col . ' IS NOT NULL';
                 break;
             case self::OPERATOR_CONTAINS:
-                $where = $col . ' LIKE ' . $this->getDb()->quote('%' . $value . '%');
+                $where = $col . ' LIKE ' . $this->_quote($colOrig, '%' . $value . '%');
                 break;
             case self::OPERATOR_STARTSWITH:
-                $where = $col . ' LIKE ' . $this->getDb()->quote($value . '%');
+                $where = $col . ' LIKE ' . $this->_quote($colOrig, $value . '%');
                 break;
             case self::OPERATOR_NOTCONTAINS:
-                $where = $col . ' NOT LIKE ' . $this->getDb()->quote('%' . $value . '%');
+                $where = $col . ' NOT LIKE ' . $this->_quote($colOrig, '%' . $value . '%');
                 break;
             default:
                 $this->getResources()->err('Invalid oprator=' . $operator);

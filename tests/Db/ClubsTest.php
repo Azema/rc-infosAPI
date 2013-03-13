@@ -150,6 +150,7 @@ class ClubsTest extends AbstractTestDb
 		$this->assertInternalType('int', $actual);
 		$this->assertEquals(1, $actual);
 		$club = $this->_object->fetchOne(array('name'=>'myClub'));
+        $this->assertInstanceof('\Rca\Model\Club', $club);
 		foreach ($data as $key => $value) {
 			switch ($key) {
 				case 'id':
@@ -162,6 +163,21 @@ class ClubsTest extends AbstractTestDb
 					break;
 			}
 		}
+	}
+
+	public function testWhereWithOperator()
+	{
+        $league = self::$_phactory->create('league');
+        // create a row in the db with age = $i, and store a Phactory_Row object
+        $club = self::$_phactory->createWithAssociations('club', array('league' => $league));
+		$actual = $this->_object->fetchOne(array('email' => '<> '.$club->clb_email));
+		$this->assertFalse($actual);
+		$actual = $this->_object->fetchOne(array('email' => '= '.$club->clb_email));
+        $this->assertInstanceof('\Rca\Model\Club', $actual);
+        $this->assertEquals($club->clb_email, $actual->email);
+        $ids = array($club->clb_id-1, $club->clb_id, $club->clb_id+1);
+		$actual = $this->_object->fetchOne(array('id' => $ids));
+        $this->assertInstanceof('\Rca\Model\Club', $actual);
 	}
 
 	public function testInsertEmptyData()
