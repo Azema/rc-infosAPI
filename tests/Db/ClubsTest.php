@@ -148,7 +148,7 @@ class ClubsTest extends AbstractTestDb
 		);
 		$actual = $this->_object->insert($data);
 		$this->assertInternalType('int', $actual);
-		$this->assertEquals(1, $actual);
+		$this->assertGreaterThan(1, $actual);
 		$club = $this->_object->fetchOne(array('name'=>'myClub'));
         $this->assertInstanceof('\Rca\Model\Club', $club);
 		foreach ($data as $key => $value) {
@@ -156,10 +156,10 @@ class ClubsTest extends AbstractTestDb
 				case 'id':
 				case 'createdAt':
 				case 'updatedAt':
-					$this->assertNotEquals($value, $club->$key);
+					$this->assertNotEquals($value, $club->$key, $key . ' is equals');
 					break;
 				default:
-					$this->assertEquals($value, $club->$key);
+					$this->assertEquals($value, $club->$key, $key . ' is not equals');
 					break;
 			}
 		}

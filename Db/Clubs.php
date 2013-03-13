@@ -31,18 +31,49 @@ class Clubs extends \Rca\Db\AbstractDb
 
 	protected $_objectName = '\Rca\Model\Club';
 
+	protected $_join = array(
+		'leagueId' => 'leagues',
+	);
+
 	protected function _init()
 	{
 		unset($this->_map['leg_id']);
 		$this->_map['leagueId'] = 'clb_leg_id';
 	}
 
+	/**
+     * Applies specific filters depending on the model
+     *
+     * @param Zend_Db_Select $select DB object 'Select'
+     * @param CommonFilter   $filter Filter
+     *
+     * @return void
+     */
+    protected function _specificFilters($select, $properties = array(), $where = array(), $group = array())
+    {
+        $tablesToJoin = $this->_getTableToJoin($properties, $where);
+        //echo 'tablesToJoin: ';var_dump($tablesToJoin);
+
+        if (in_array('leagues', $tablesToJoin)) {
+
+        }
+    }
+
+    /**
+     * Methode d'insertion de données d'un enregistrement
+     *
+     * @param array $data Les données
+     * @param bool  $ignore
+     *
+     * @return int L'identifiant du nouvel insert
+     */
 	public function insert($data, $ignore = false)
 	{
 		if (empty($data)) {
 			return 0;
 		}
-		return $this->insertMulti(array($data), $ignore);
+		$this->insertMulti(array($data), $ignore);
+		return (int)$this->getDb()->lastInsertId();
 	}
 
 	public function insertMulti($data, $ignore = false)

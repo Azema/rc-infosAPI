@@ -559,30 +559,34 @@ abstract class AbstractDb
      *
      * @return array
      */
-    protected function _getTableToJoin($properties=array(), $group=array())
+    protected function _getTableToJoin($properties=array(), $where=array(), $group=array())
     {
         $tablesToJoin = $colsToJoin = array();
         if (count($this->_join)) {
             $mapCols = $this->_getMapCols($properties);
+            //echo 'mapCols: ';var_dump($mapCols);
 
             //ajout des colonnes associées au group by
-            $group = $this->_getGroup($group);
-            if (isset($group) && is_array($group) && count($group) >= 1) {
+            if (is_array($group) && !empty($group)) {
                 $mapCols = array_unique(array_merge($this->_getMapCols($group), $mapCols));
             }
 
-            $mapObj = $this->_getMapObject($filter);
+            $mapData = $this->_getMapDatas($where);
+            //echo 'mapData: ';var_dump($mapData);
             //pour chaque table dans _join
             foreach ($this->_join as $col => $cond) {
                 //récupération de la liste des colonnes liés à une jointure
-                $joinMapCols = array_keys($this->_join, $cond);
+                $joinMapCols = $this->_getMapCols(array_keys($this->_join, $cond));
+                //echo 'joinMapCols: ';var_dump($joinMapCols);
 
+                $selectMapCols = array_intersect($joinMapCols, $mapCols);
+                //echo 'selectMapCols: ';var_dump($selectMapCols);
                 //si une des colonnes dans join map une des colonnes du select
-                if (count(array_intersect($joinMapCols, $mapCols)) != 0) {
-                    $colsToJoin[$col] = $cond;
+                if (!empty($selectMapCols)) {
+                    $colsToJoin[$selectMapCols[$col]] = $cond;
                 } else {
                     //si une des colonnes dans join est initialisé dans l'objet filtre
-                    foreach ($mapObj as $cols => $value) {
+                    foreach ($mapData as $cols => $value) {
                         if (is_null($value)) {
                             continue;
                         }
@@ -775,35 +779,21 @@ abstract class AbstractDb
     }
 
     /**
-     * Méthode à surcharger dans les classes filles pour appliquer des filtres
-     * spécifiques en fonction du modèle
-     *
-     * @param \Zend_Db_Select  $select Objet Select de Zend_Db
-     * @param \Deo\Dao\IFilter $filter Filtre
-     *
-     * @return void
-     */
-    protected function _specificFilters($select, $properties=array(), $where=array(), $limit=null, 
-        $offset=0, $sort=array(), $group=array())
-    {
-    }
-
-    /**
      * Retourne les données avec les colonnes associés aux proriétés dans le map
      *
      * @param array $datas liste des champs des objets et leurs valeurs associés
      *
      * @return array liste des colonnes et leurs valeurs associés
      */
-    protected function _getMapDatas($datas)
+    protected function _getMapDatas($data)
     {
         $bind = array();
 
         //récupération des champs dans datas présents dans map
         $mapping = $this->_getMap();
-        $datas = array_intersect_key($datas, $mapping);
+        $data = array_intersect_key($data, $mapping);
 
-        foreach ($datas as $property => $value) {
+        foreach ($data as $property => $value) {
             $bind[$mapping[$property]] = $value;
         }
 
@@ -856,7 +846,8 @@ abstract class AbstractDb
         // Définition de la table et des colonnes
         $select->from($this->_name, $this->_getMapCols($properties, true));
 
-        $joins = $this->_getJoins($where);
+        $joins = $this->_getJoins($properties, $where, $group);
+        //var_dump($joins);
         foreach ($joins as $table => $join) {
             /*
              * 0: string    condition on join manadatory
@@ -879,11 +870,11 @@ abstract class AbstractDb
 
         // Gestion des filtres
         $wheres = $this->_getWhere($where);
-        foreach ($wheres as $where) {
-            $select->where($where);
+        foreach ($wheres as $clause) {
+            $select->where($clause);
         }
 
-        //$this->_specificFilters($select, $filters);
+        $this->_specificFilters($select, $properties, $where, $group);
 
         // Limitation du nombre de résultat
         if (isset($limit) && isset($offset)) {
@@ -900,6 +891,19 @@ abstract class AbstractDb
         }
 
         return $select;
+    }
+
+    /**
+     * Méthode à surcharger dans les classes filles pour appliquer des filtres
+     * spécifiques en fonction du modèle
+     *
+     * @param \Zend_Db_Select  $select Objet Select de Zend_Db
+     * @param \Deo\Dao\IFilter $filter Filtre
+     *
+     * @return void
+     */
+    protected function _specificFilters($select, $properties=array(), $where=array(), $group=array())
+    {
     }
 
     /**
@@ -1033,7 +1037,7 @@ abstract class AbstractDb
      *
      * @return array joins list
      */
-    private function _getJoins($properties=array(), $group=array())
+    private function _getJoins($properties=array(), $where = array(), $group=array())
     {
         $joins = array();
         if (count($this->_join)) {
@@ -1043,7 +1047,7 @@ abstract class AbstractDb
             }
         }
 
-        $joins = $this->_getTableToJoin($properties, $group);
+        $joins = $this->_getTableToJoin($properties, $where, $group);
         return $joins;
     }
 
