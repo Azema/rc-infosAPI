@@ -331,18 +331,19 @@ abstract class AbstractDb
     public function count($where = array(), $properties = array(), $group = array())
     {
         if (!empty($this->_primary)) {
-            $properties = $this->_primary;
+            $properties = array('tools_count');
         }
 
         $select = $this->_selectFromFilter($properties, $where, null, 0, array(), $group);
         $sql = $select->__toString();
+        //var_dump($sql);
 
         if (strstr($sql, 'GROUP ') !== FALSE) {
             $stmt = $this->getDb()->query($sql);
             $result = count($stmt->fetchAll(\Zend_Db::FETCH_COLUMN));
         } else {
-            $properties = array('tools_count');
-            $select = $this->_selectFromFilter($properties, $where, null, 0, array(), $group);
+            //$properties = array('tools_count');
+            //$select = $this->_selectFromFilter($properties, $where, null, 0, array(), $group);
             $result = intval($this->getDb()->fetchOne($select));
         }
 
@@ -540,7 +541,7 @@ abstract class AbstractDb
         foreach ($this->_metadata as $column) {
             $this->_map[str_replace($prefix, '', $column['COLUMN_NAME'])] = $column['COLUMN_NAME'];
             if ($column['PRIMARY']) {
-                $this->_primary[] = $column['COLUMN_NAME'];
+                $this->_primary[$column['COLUMN_NAME']] = str_replace($prefix, '', $column['COLUMN_NAME']);
             }
         }
 
@@ -627,6 +628,7 @@ abstract class AbstractDb
             $properties = $this->_map;
         }
         $properties = array_merge($properties, $propertiesOptionnal, $propertiesTools);
+        //var_dump($properties);
 
         return $properties;
     }
