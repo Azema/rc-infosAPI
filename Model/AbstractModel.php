@@ -108,4 +108,17 @@ abstract class AbstractModel
 		}
 		return $this;
 	}
+
+	/**
+	 * Définit l'identifiant du modèle
+	 *
+	 * @param int $id L'identifiant
+	 *
+	 * @return \Rca\Model\AbstractModel
+	 */
+	public function setId($id)
+	{
+		$this->id = (int)$id;
+		return $this;
+	}
 }
