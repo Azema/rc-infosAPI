@@ -163,4 +163,11 @@ class ClubsTest extends AbstractTestDb
 			}
 		}
 	}
+
+	public function testInsertEmptyData()
+	{
+		$actual = $this->_object->insert(array());
+		$this->assertInternalType('int', $actual);
+		$this->assertEquals(0, $actual);
+	}
 }

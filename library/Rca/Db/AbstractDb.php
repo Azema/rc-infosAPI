@@ -401,7 +401,7 @@ abstract class AbstractDb
      */
     public function insertMulti($datas, $ignore = false)
     {
-        if (count($datas) == 0) {
+        if (empty($datas)) {
             return 0;
         }
 
