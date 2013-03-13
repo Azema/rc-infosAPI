@@ -39,6 +39,9 @@ class Clubs extends \Rca\Db\AbstractDb
 
 	public function insert($data, $ignore = false)
 	{
+		if (empty($data)) {
+			return 0;
+		}
 		return $this->insertMulti(array($data), $ignore);
 	}
 
