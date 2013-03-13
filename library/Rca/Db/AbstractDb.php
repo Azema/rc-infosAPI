@@ -189,7 +189,7 @@ abstract class AbstractDb
         // Extensions...
         $this->_setupMetadata();
         $this->_initPrimaryKey();
-        $this->init();
+        $this->_init();
     }
 
     /**
@@ -471,7 +471,7 @@ abstract class AbstractDb
      *
      * @return void
      */
-    protected function init()
+    protected function _init()
     {
     }
 

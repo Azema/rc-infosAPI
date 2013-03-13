@@ -31,7 +31,7 @@ class Clubs extends \Rca\Db\AbstractDb
 
 	protected $_objectName = '\Rca\Model\Club';
 
-	protected function init()
+	protected function _init()
 	{
 		unset($this->_map['leg_id']);
 		$this->_map['leagueId'] = 'clb_leg_id';
