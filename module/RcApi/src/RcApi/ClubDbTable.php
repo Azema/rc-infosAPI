@@ -18,7 +18,7 @@ class ClubDbTable extends AbstractTableGateway
         $this->adapter            = $adapter;
         $this->table              = $table;
         $rowPrototype             = new Club();
-        $hydratorPrototype        = new ClassMethodsHydrator();
+        $hydratorPrototype        = new Hydrator\ClubHydrator();
         $this->resultSetPrototype = new HydratingResultSet($hydratorPrototype, $rowPrototype);
         $this->resultSetPrototype->buffer();
         $this->initialize();
@@ -30,7 +30,7 @@ class ClubDbTable extends AbstractTableGateway
         $select->order('clb_updatedAt DESC');
 
         $adapter = new DbTablePaginator(
-            $select, 
+            $select,
             $this->getAdapter(),
             $this->resultSetPrototype
         );

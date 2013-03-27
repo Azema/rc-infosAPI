@@ -11,7 +11,7 @@ class ClubDbPersistenceFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $services)
     {
-        $table = $services->get('RcApi\DbTable');
+        $table = $services->get('RcApi\ClubDbTable');
         return new ClubDbPersistence($table);
     }
 }

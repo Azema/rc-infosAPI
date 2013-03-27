@@ -1,6 +1,6 @@
 <?php
 
-namespace Phpbnl13StatusApi\Exception;
+namespace RcApi\Exception;
 
 interface ExceptionInterface
 {

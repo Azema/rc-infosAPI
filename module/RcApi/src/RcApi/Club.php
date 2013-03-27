@@ -5,6 +5,8 @@
  */
 namespace RcApi;
 
+use DateTime;
+
 /**
  * Clubs
  */
@@ -36,7 +38,7 @@ class Club implements ClubInterface
 
     public function setName($name)
     {
-        if (!preg_match('/^[a-zA-Z]{1,50}$/', $name)) {
+        if (!is_string($name) || empty($name)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'name provided, "%s", does not appear to be a valid',
                 $name
@@ -81,13 +83,14 @@ class Club implements ClubInterface
 
     public function setPhone($phone)
     {
-        if (null !== $phone
-            && !preg_match('/^(\+33|0)[0-9]{9}$/', $phone)
-        ) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Phone must be valid; "%s" fails validation',
-                $phone
-            ));
+        if (null !== $phone) {
+            $phone = preg_replace('/[^\+0-9]*/', '', $phone);
+            if (!preg_match('/^(\+33|0)[0-9]{9}$/', $phone)) {
+                throw new Exception\InvalidArgumentException(sprintf(
+                    'Phone must be valid; "%s" fails validation',
+                    $phone
+                ));
+            }
         }
         $this->phone = $phone;
     }
@@ -107,12 +110,12 @@ class Club implements ClubInterface
 
     public function setCreatedAt($date)
     {
-        $this->createdAt = new DateTime($date);
+        $this->createdAt = $date;
     }
 
     public function setUpdatedAt($date)
     {
-        $this->updatedAt = new DateTime($date);
+        $this->updatedAt = $date;
     }
 
     public function setTracks($tracks)

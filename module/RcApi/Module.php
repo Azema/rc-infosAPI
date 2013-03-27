@@ -21,7 +21,7 @@ use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 
 /**
  * Classe initialisation du module
- * 
+ *
  * @category RcApi
  * @package  RcApi
  * @author   Matthew wieir O'Phinney <toto@gmail.com>
@@ -32,7 +32,7 @@ class Module
 {
     /**
      * Autoloader config
-     * 
+     *
      * @return array
      */
     public function getAutoloaderConfig()
@@ -63,8 +63,12 @@ class Module
      */
     public function onBootstrap($e)
     {
-        $app    = $e->getTarget();
-        $events = $app->getEventManager();
+        $app      = $e->getTarget();
+        $services = $app->getServiceManager();
+        $events   = $app->getEventManager();
+        if ($services->has('Hydrator\ClassMethods')) {
+            $services->get('Hydrator\ClassMethods')->setUnderscoreSeparatedKeys(false);
+        }
         $events->attach('route', array($this, 'onRoute'), -100);
 
         $sharedEvents = $events->getSharedManager();
@@ -103,15 +107,15 @@ class Module
 
         // Add a "Link" header pointing to the documentation
         $sharedEvents->attach(
-            $controllers, 
-            'dispatch', 
-            array($this, 'setDocumentationLink'), 
+            $controllers,
+            'dispatch',
+            array($this, 'setDocumentationLink'),
             10
         );
 
         // Add a "describedby" relation to resources
         $sharedEvents->attach(
-            $controllers, 
+            $controllers,
             array(
                 'getList.post',
                 'get.post',
@@ -135,7 +139,7 @@ class Module
             //$collection->setResourceRoute('phpbnl13_status_api/user');
         //});
 
-        // Set a listener on the renderCollection.resource event to ensure 
+        // Set a listener on the renderCollection.resource event to ensure
         // individual status links pass in the user to the route.
         $helpers = $services->get('ViewHelperManager');
         $links   = $helpers->get('HalLinks');

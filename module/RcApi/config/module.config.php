@@ -2,11 +2,16 @@
 return array(
     'rc_api' => array(
         'page_size' => 10, // number of status items to return by default
+        'prefixes' => array(
+            'RcApi\Hydrator\ClubHydrator' => 'clb_',
+        ),
     ),
     'phlyrestfully' => array(
         'renderer' => array(
+            'default_hydrator' => 'Hydrator\ArraySerializable',
+            //'default_hydrator' => 'Hydrator\ClassMethods',
             'hydrators' => array(
-                'RcApi\Clubs' => 'Hydrator\ClassMethods',
+                'RcApi\Club' => 'Hydrator\ClassMethods',
             ),
         ),
     ),
@@ -95,9 +100,10 @@ return array(
         ),
         'invokables' => array(
             'Hydrator\ClassMethods' => 'Zend\Stdlib\Hydrator\ClassMethods',
+            'ClubHydrator' => 'RcApi\Hydrator\ClubHydrator',
         ),
         'factories' => array(
-            'RcApi\DbTable' => 'RcApi\Service\DbTableFactory',
+            'RcApi\ClubDbTable' => 'RcApi\Service\ClubDbTableFactory',
             'RcApi\ClubDbPersistence' => 'RcApi\Service\ClubDbPersistenceFactory',
             'RcApi\ClubResource' => 'RcApi\Service\ClubResourceFactory',
         ),
