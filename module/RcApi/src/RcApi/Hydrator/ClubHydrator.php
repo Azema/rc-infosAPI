@@ -25,7 +25,7 @@ use Zend\Stdlib\Hydrator\Filter\NumberOfParameterFilter;
 
 class ClubHydrator extends ClassMethods implements HydratorOptionsInterface
 {
-	protected $prefix = 'clb_';
+	protected $prefix;
 
 	/**
      * @param  array|Traversable $options
