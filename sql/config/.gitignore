@@ -1,14 +1,1 @@
-[default]
-type     = "mysql"
-socket   = "/var/run/mysqld/mysqld.sock"
-options.PDO::MYSQL_ATTR_INIT_COMMAND = "SET NAMES utf8"
-
-[development : default]
-database = "rcinfos_dev"
-user     = "rcinfos"
-password = "rcinfos"
-
-[test : default]
-database = "rcinfos_test"
-user     = "rcinfos"
-password = "rcinfos"
+database.ini
