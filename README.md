@@ -4,6 +4,7 @@ rc-infosAPI [![Build Status](https://travis-ci.org/Azema/rc-infosAPI.png?branch=
 API pour les infos RC
 
 Pour fonctionner, 
+* lancer la commande suivante: <code>php composer.phar install</code>
 * Créer vous une base de données avec un utilisateur
 * copier le fichier <code>config/autoload/local.php</code> et renseigner les informations de connexion à la base de données.
 * Utiliser le fichier <code>sql/migrate/schema.txt</code> pour créer la structure de la base de données.
