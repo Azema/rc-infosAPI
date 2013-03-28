@@ -10,3 +10,8 @@ composer.lock
 *.swp
 *.swo
 *.tags*
+build/coverage
+build/logs
+data/logs/*.log
+vendor/*
+tests/tmp/*
