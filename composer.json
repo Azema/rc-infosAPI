@@ -1,10 +1,8 @@
 {
-    "name": "rcinfos/rc-api",
-    "description": "API pour l'application RC infos",
+    "name": "rcinfos/rcinfos-api",
+    "description": "API for rcinfos",
     "license": "BSD-3-Clause",
     "keywords": [
-        "framework",
-        "zf2",
         "RC",
         "API"
     ],
