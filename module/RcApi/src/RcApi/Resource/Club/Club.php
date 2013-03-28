@@ -3,7 +3,7 @@
 /**
  *
  */
-namespace RcApi;
+namespace RcApi\Resource\Club;
 
 use DateTime;
 
@@ -33,7 +33,7 @@ class Club implements ClubInterface
                 $id
             ));
         }
-        $this->id = $id;
+        $this->id = (int)$id;
     }
 
     public function setName($name)

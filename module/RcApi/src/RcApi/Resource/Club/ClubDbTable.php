@@ -1,6 +1,6 @@
 <?php
 
-namespace RcApi;
+namespace RcApi\Resource\Club;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\HydratingResultSet;
@@ -8,6 +8,7 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Paginator\Adapter\DbSelect as DbTablePaginator;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
+use RcApi\Hydrator;
 
 class ClubDbTable extends AbstractTableGateway
 {
@@ -19,6 +20,7 @@ class ClubDbTable extends AbstractTableGateway
         $this->table              = $table;
         $rowPrototype             = new Club();
         $hydratorPrototype        = new Hydrator\ClubHydrator();
+        $hydratorPrototype->setPrefix($this->prefix);
         $this->resultSetPrototype = new HydratingResultSet($hydratorPrototype, $rowPrototype);
         $this->resultSetPrototype->buffer();
         $this->initialize();

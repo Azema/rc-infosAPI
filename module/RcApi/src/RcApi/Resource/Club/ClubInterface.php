@@ -1,6 +1,6 @@
 <?php
 
-namespace RcApi;
+namespace RcApi\Resource\Club;
 
 /**
  * Interface for club

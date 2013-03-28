@@ -19,6 +19,10 @@ use PhlyRestfully\View\RestfulJsonModel;
 use Zend\Paginator\Paginator;
 use Zend\Stdlib\Hydrator\ClassMethods as ClassMethodsHydrator;
 
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Zend\ServiceManager\FactoryInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
 /**
  * Classe initialisation du module
  *
@@ -52,6 +56,124 @@ class Module
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
+    }
+
+    /**
+     * Retrieve Service Manager configuration
+     *
+     * @return array
+     */
+    public function getServiceConfig()
+    {
+        return array(
+            /*'aliases' => array(
+                'RcApi\DbAdapter' => 'Zend\Db\Adapter\Adapter',
+                'RcApi\ClubPersistenceListener' => 'RcApi\Resource\Club\ClubDbPersistence',
+                'RcApi\LeaguePersistenceListener' => 'RcApi\Resource\League\LeagueDbPersistence',
+            ),*/
+            'factories' => array(
+                'RcApi\ClubDbTable' => function ($services) {
+                    $adapter = $services->get('RcApi\DbAdapter');
+                    $config = array();
+                    if ($services->has('config')) {
+                        $config = $services->get('config');
+                    }
+                    $table   = 'clubs';
+                    if (isset($config['rc_api']) && isset($config['rc_api']['clubs'])
+                        && isset($config['rc_api']['clubs']['table'])
+                    ) {
+                        $table = $config['rc_api']['clubs']['table'];
+                    }
+
+                    return new Resource\Club\ClubDbTable($adapter, $table);
+                },
+                'RcApi\ClubDbPersistence' => function($services) {
+                    $table = $services->get('RcApi\ClubDbTable');
+                    return new Resource\Club\ClubDbPersistence($table);
+                },
+                'RcApi\ClubResource' => function($services) {
+                    $events   = $services->get('EventManager');
+                    $resource = new \PhlyRestfully\Resource;
+                    $resource->setEventManager($events);
+
+                    $listener = $services->get('RcApi\ClubPersistenceListener');
+                    $events->attach($listener);
+
+                    return $resource;
+                },
+                'RcApi\LeagueDbTable' => function ($services) {
+                    $adapter = $services->get('RcApi\DbAdapter');
+                    $config = array();
+                    if ($services->has('config')) {
+                        $config = $services->get('config');
+                    }
+                    $table   = 'leagues';
+                    if (isset($config['rc_api']) && isset($config['rc_api']['leagues'])
+                        && isset($config['rc_api']['leagues']['table'])
+                    ) {
+                        $table = $config['rc_api']['leagues']['table'];
+                    }
+
+                    return new Resource\League\LeagueDbTable($adapter, $table);
+                },
+                'RcApi\LeagueDbPersistence' => function($services) {
+                    $table = $services->get('RcApi\LeagueDbTable');
+                    return new Resource\League\LeagueDbPersistence($table);
+                },
+                'RcApi\LeagueResource' => function($services) {
+                    $events   = $services->get('EventManager');
+                    $resource = new \PhlyRestfully\Resource;
+                    $resource->setEventManager($events);
+
+                    $listener = $services->get('RcApi\LeaguePersistenceListener');
+                    $events->attach($listener);
+
+                    return $resource;
+                },
+            ),
+            'invokables' => array(
+                'Hydrator\ClassMethods' => 'Zend\Stdlib\Hydrator\ClassMethods',
+                'ClubHydrator' => 'RcApi\Hydrator\ClubHydrator',
+            ),
+        );
+    }
+
+    public function getControllerConfig()
+    {
+        return array(
+            'factories' => array(
+                'RcApi\ClubsResourceController' => function(ServiceLocatorInterface $controllers) {
+                    $services   = $controllers->getServiceLocator();
+                    $resource   = $services->get('RcApi\ClubResource');
+                    $config     = $services->get('config');
+                    $config     = isset($config['rc_api']) ? $config['rc_api'] : array();
+                    $pageSize   = isset($config['page_size']) ? $config['page_size'] : 10;
+
+                    $controller = new \PhlyRestfully\ResourceController('RcApi\ClubsResourceController');
+                    $controller->setResource($resource);
+                    $controller->setPageSize($pageSize);
+                    $controller->setRoute('rc_clubs_api/public');
+                    $controller->setCollectionHttpOptions(array('GET','POST'));
+                    $controller->setCollectionName('clubs');
+                    return $controller;
+                },
+                'RcApi\LeaguesResourceController' => function(ServiceLocatorInterface $controllers) {
+                    $services   = $controllers->getServiceLocator();
+                    $resource   = $services->get('RcApi\LeagueResource');
+                    $config     = $services->get('config');
+                    $config     = isset($config['rc_api']) ? $config['rc_api'] : array();
+                    $pageSize   = isset($config['page_size']) ? $config['page_size'] : 10;
+
+                    $controller = new \PhlyRestfully\ResourceController('RcApi\LeaguesResourceController');
+                    $controller->setResource($resource);
+                    $controller->setPageSize($pageSize);
+                    $controller->setRoute('rc_leagues_api/public');
+                    $controller->setCollectionHttpOptions(array('GET','POST'));
+                    $controller->setCollectionName('leagues');
+                    return $controller;
+                },
+            ),
+        );
     }
 
     /**
@@ -89,14 +211,17 @@ class Module
      */
     public function onRoute($e)
     {
-        $controllers = 'RcApi\ClubsResourceController';
+        $controllers = array(
+            'RcApi\ClubsResourceController',
+            'RcApi\LeaguesResourceController',
+        );
 
         $matches = $e->getRouteMatch();
         if (!$matches) {
             return;
         }
         $controller = $matches->getParam('controller', false);
-        if ($controller != $controllers) {
+        if (!in_array($controller, $controllers)) {
             return;
         }
 
@@ -148,15 +273,21 @@ class Module
             $route       = $eventParams['route'];
             $routeParams = $eventParams['routeParams'];
 
-            if ($route != 'rc_clubs_api/public') {
+            if ($route != 'rc_clubs_api/public'
+                && $route != 'rc_leagues_api/public'
+            ) {
                 return;
             }
 
             $resource = $eventParams['resource'];
 
-            if ($resource instanceof Club) {
-               $eventParams['route'] = 'rc_clubs_api/club';
+            if ($resource instanceof Resource\Club\Club) {
+                $eventParams['route'] = 'rc_clubs_api/club';
                 $eventParams['routeParams']['id']  = $resource->getId();
+                return;
+            } elseif ($resource instanceof Resource\League\League) {
+                $eventParams['route'] = 'rc_leagues_api/league';
+                $eventParams['routeParams']['id'] = $resource->getId();
                 return;
             }
 
@@ -173,10 +304,10 @@ class Module
         });
 
         // Set the user in the persistence listener
-        $persistence = $services->get('RcApi\PersistenceListener');
-        if (!$persistence instanceof StatusPersistenceInterface) {
+        /*$persistence = $services->get('RcApi\ClubPersistenceListener');
+        if (!$persistence instanceof Resource\Club\ClubPersistenceInterface) {
             return;
-        }
+        }*/
     }
 
     /**

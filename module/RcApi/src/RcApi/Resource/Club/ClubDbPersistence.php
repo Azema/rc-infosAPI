@@ -1,6 +1,6 @@
 <?php
 
-namespace RcApi;
+namespace RcApi\Resource\Club;
 
 use PhlyRestfully\Exception\CreationException;
 use PhlyRestfully\Exception\UpdateException;

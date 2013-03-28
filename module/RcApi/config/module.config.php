@@ -8,8 +8,8 @@ return array(
     ),
     'phlyrestfully' => array(
         'renderer' => array(
-            'default_hydrator' => 'Hydrator\ArraySerializable',
-            //'default_hydrator' => 'Hydrator\ClassMethods',
+            //'default_hydrator' => 'Hydrator\ArraySerializable',
+            'default_hydrator' => 'Hydrator\ClassMethods',
             'hydrators' => array(
                 'RcApi\Club' => 'Hydrator\ClassMethods',
             ),
@@ -17,6 +17,67 @@ return array(
     ),
     'router' => array(
         'routes' => array(
+            'rc_leagues_api' => array(
+                'type' => 'Literal',
+                'options' => array(
+                    'route' => '/api/leagues',
+                    'defaults' => array(
+                        'controller' => 'RcApi\LeaguesResourceController',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'public' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route'    => '/public',
+                        ),
+                    ),
+                    'league' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/:id',
+                            'defaults' => array(
+                                'controller' => 'RcApi\LeaguesResourceController',
+                            ),
+                            'constraints' => array(
+                                'id' => '[0-9]{1,11}',
+                            ),
+                        ),
+                    ),
+                    'documentation' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route'    => '/documentation',
+                            'defaults' => array(
+                                'controller' => 'PhlySimplePage\Controller\Page',
+                                'template'   => 'rc_leagues_api/documentation',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'collection' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/collection',
+                                    'defaults' => array(
+                                        'template'   => 'rc_leagues_api/documentation/collection',
+                                    ),
+                                ),
+                            ),
+                            'leagues' => array(
+                                'type'    => 'Literal',
+                                'options' => array(
+                                    'route'    => '/leagues',
+                                    'defaults' => array(
+                                        'template'   => 'rc_leagues_api/documentation/leagues',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
             'rc_clubs_api' => array(
                 'type' => 'Literal',
                 'options' => array(
@@ -36,7 +97,7 @@ return array(
                     'club' => array(
                         'type' => 'Segment',
                         'options' => array(
-                            'route' => '/club[/:id]',
+                            'route' => '/:id',
                             'defaults' => array(
                                 'controller' => 'RcApi\ClubsResourceController',
                             ),
@@ -96,9 +157,10 @@ return array(
     'service_manager' => array(
         'aliases' => array(
             'RcApi\DbAdapter' => 'Zend\Db\Adapter\Adapter',
-            'RcApi\PersistenceListener' => 'RcApi\ClubDbPersistence',
+            'RcApi\ClubPersistenceListener' => 'RcApi\ClubDbPersistence',
+            'RcApi\LeaguePersistenceListener' => 'RcApi\LeagueDbPersistence',
         ),
-        'invokables' => array(
+/*        'invokables' => array(
             'Hydrator\ClassMethods' => 'Zend\Stdlib\Hydrator\ClassMethods',
             'ClubHydrator' => 'RcApi\Hydrator\ClubHydrator',
         ),
@@ -106,11 +168,11 @@ return array(
             'RcApi\ClubDbTable' => 'RcApi\Service\ClubDbTableFactory',
             'RcApi\ClubDbPersistence' => 'RcApi\Service\ClubDbPersistenceFactory',
             'RcApi\ClubResource' => 'RcApi\Service\ClubResourceFactory',
-        ),
+        ),*/
     ),
     'controllers' => array(
         'factories' => array(
-            'RcApi\ClubsResourceController' => 'RcApi\Service\ClubsResourceControllerFactory',
+            //'RcApi\ClubsResourceController' => 'RcApi\Service\ClubsResourceControllerFactory',
             //'RcApi\ClubsResourceTrackController' => 'RcApi\Service\ClubsResourceTrackControllerFactory',
         ),
     ),
@@ -119,6 +181,8 @@ return array(
             'rc_clubs_api/documentation' => __DIR__ . '/../view/rc_api/documentation.phtml',
             'rc_clubs_api/documentation/collection' => __DIR__ . '/../view/rc_api/documentation/collection.phtml',
             'rc_clubs_api/documentation/clubs' => __DIR__ . '/../view/rc_api/documentation/clubs.phtml',
+            'rc_leagues_api/documentation/collection' => __DIR__ . '/../view/rc_api/documentation/collection.phtml',
+            'rc_leagues_api/documentation/leagues' => __DIR__ . '/../view/rc_api/documentation/leagues.phtml',
         ),
     ),
 );
