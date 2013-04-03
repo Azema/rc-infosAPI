@@ -1,0 +1,16 @@
+<?php
+
+return array(
+    'resources' => array(
+        'db' => array(
+            'adapter' => 'pdo_mysql',
+            'params' => array(
+                'host' => 'localhost',
+                'dbname' => 'rcinfos_dev',
+                'username' => 'XXXXXX',
+                'password' => 'XXXXXX',
+            ),
+            'isDefaultTableAdapter' => true,
+        ),
+    ),
+);
