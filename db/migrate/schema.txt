@@ -1,0 +1,75 @@
+CREATE TABLE `clubs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `postCode` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `gps` varchar(255) DEFAULT NULL,
+  `siteWeb` varchar(255) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `leagueId` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `clubs_ibfk_leagueId` (`leagueId`),
+  CONSTRAINT `clubs_ibfk_leagueId` FOREIGN KEY (`leagueId`) REFERENCES `leagues` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `drivers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `license` varchar(255) DEFAULT NULL,
+  `licenseType` varchar(255) DEFAULT NULL,
+  `firstname` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `clubId` int(11) unsigned DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `drivers_ibfk_clubId` (`clubId`),
+  CONSTRAINT `drivers_ibfk_clubId` FOREIGN KEY (`clubId`) REFERENCES `clubs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `leagues` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `president` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `postCode` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `siteWeb` varchar(255) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `schema_migrations` (
+  `version` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `idx_schema_migrations_version` (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `tracks` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `clubId` int(11) unsigned NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `motors` varchar(255) DEFAULT NULL,
+  `coating` varchar(255) DEFAULT NULL,
+  `length` smallint(6) DEFAULT NULL,
+  `scale` smallint(6) DEFAULT NULL,
+  `scales` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `postCode` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `gps` varchar(255) DEFAULT NULL,
+  `equipments` varchar(255) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `tracks_ibfk_clubId` (`clubId`),
+  CONSTRAINT `tracks_ibfk_clubId` FOREIGN KEY (`clubId`) REFERENCES `clubs` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
