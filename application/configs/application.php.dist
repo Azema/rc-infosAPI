@@ -1,0 +1,26 @@
+<?php
+
+return array(
+    'phpSettings' => array(
+        'display_startup_errors' => 0,
+        'display_errors' => 0,
+    ),
+    'includePaths' => array(
+        'library' => APPLICATION_PATH . '/../library',
+    ),
+    'bootstrap' => array(
+        'path' => APPLICATION_PATH . '/Bootstrap.php',
+        'class' => 'Bootstrap',
+    ),
+    'appnamespace' => 'Application',
+    'resources' => array(
+        'frontController' => array(
+            'moduleControllerDirectoryName' => 'controllers',
+            'moduleDirectory' => APPLICATION_PATH . '/modules',
+            'defaultModule' => 'frontend',
+            'params' => array(
+                'displayExceptions' => 0,
+            ),
+        ),
+    ),
+);
