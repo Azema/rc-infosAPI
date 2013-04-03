@@ -1,6 +1,6 @@
 <?php
 
-class Api_Boostrap extends Zend_Application_Module_Bootstrap
+class Backend_Bootstrap extends Zend_Application_Module_Bootstrap
 {
     /**
      * Application resource namespace

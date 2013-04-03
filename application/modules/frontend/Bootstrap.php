@@ -1,6 +1,6 @@
 <?php
 
-class Front_Boostrap extends Zend_Application_Module_Bootstrap
+class Front_Bootstrap extends Zend_Application_Module_Bootstrap
 {
     /**
      * Application resource namespace

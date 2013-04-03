@@ -2,7 +2,7 @@
 <projectProfile type="default" version="1.11.11">
   <projectDirectory>
     <projectProfileFile filesystemName=".zfproject.xml"/>
-    <applicationDirectory classNamePrefix="Application_">
+    <applicationDirectory classNamePrefix="">
       <apisDirectory enabled="false"/>
       <configsDirectory>
         <applicationConfigFile type="ini"/>
@@ -15,17 +15,35 @@
       </controllersDirectory>
       <formsDirectory enabled="false"/>
       <layoutsDirectory enabled="false"/>
-      <modelsDirectory/>
+      <modelsDirectory>
+        <dbTableDirectory>
+          <dbTableFile dbTableName="Clubs"/>
+          <dbTableFile dbTableName="Leagues"/>
+          <dbTableFile dbTableName="Tracks"/>
+        </dbTableDirectory>
+        <modelFile modelName="Club"/>
+        <modelFile modelName="League"/>
+        <modelFile modelName="Track"/>
+        <modelFile modelName="Driver"/>
+      </modelsDirectory>
       <modulesDirectory>
         <moduleDirectory moduleName="api">
           <apisDirectory enabled="false"/>
           <configsDirectory enabled="false"/>
-          <controllersDirectory/>
+          <controllersDirectory>
+            <controllerFile controllerName="Index">
+              <actionMethod actionName="index"/>
+            </controllerFile>
+          </controllersDirectory>
           <formsDirectory enabled="false"/>
           <layoutsDirectory enabled="false"/>
           <modelsDirectory/>
           <viewsDirectory>
-            <viewScriptsDirectory/>
+            <viewScriptsDirectory>
+              <viewControllerScriptsDirectory forControllerName="Index">
+                <viewScriptFile forActionName="index"/>
+              </viewControllerScriptsDirectory>
+            </viewScriptsDirectory>
             <viewHelpersDirectory/>
             <viewFiltersDirectory/>
           </viewsDirectory>
@@ -57,6 +75,14 @@
           </viewsDirectory>
         </moduleDirectory>
       </modulesDirectory>
+      <!--
+      <servicesDirectory>
+        <serviceFile serviceName="Club"/>
+        <serviceFile serviceName="League"/>
+        <serviceFile serviceName="Track"/>
+        <serviceFile serviceName="Driver"/>
+      </servicesDirectory>
+    -->
       <viewsDirectory>
         <viewScriptsDirectory>
           <viewControllerScriptsDirectory forControllerName="Index">
@@ -103,6 +129,15 @@
             <testApplicationActionMethod forActionName="index"/>
           </testApplicationControllerFile>
         </testApplicationControllerDirectory>
+        <testApplicationModulesDirectory>
+          <testApplicationModuleDirectory forModuleName="api">
+            <testApplicationControllerDirectory>
+              <testApplicationControllerFile forControllerName="Index">
+                <testApplicationActionMethod forActionName="index"/>
+              </testApplicationControllerFile>
+            </testApplicationControllerDirectory>
+          </testApplicationModuleDirectory>
+        </testApplicationModulesDirectory>
       </testApplicationDirectory>
       <testLibraryDirectory/>
     </testsDirectory>
