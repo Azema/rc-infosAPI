@@ -1,0 +1,4 @@
+*.tag*
+data/logs/*.log
+data/cache/*
+!data/cache/.empty
