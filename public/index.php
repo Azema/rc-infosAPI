@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+require dirname(__FILE__) . '/../vendor/autoload.php';
 
 // Define path to application directory
 defined('APPLICATION_PATH')
