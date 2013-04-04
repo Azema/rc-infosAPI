@@ -1,12 +1,16 @@
 <?php
 
-class Api_ClubsController extends Rca_Controller_Action_Restfull
+class Api_LeaguesController extends Rca_Controller_Action_Restfull
 {
-	public $route = 'clubs';
+	public $route = 'leagues';
+
+    public $resource = 'Model_League';
+
+    public $collectionName = 'leagues';
 
     public function init()
     {
-    	$this->service = new Service_Clubs();
+    	$this->service = new Service_Leagues();
         /* Initialize action controller here */
     }
 
@@ -49,16 +53,19 @@ class Api_ClubsController extends Rca_Controller_Action_Restfull
 
     protected function _getPost($id, $resource)
     {
-        $leagueId = $resource->resource->leagueId;
-        $league = $this->service->getLeague($leagueId);
-        if (!empty($league)) {
-            $league = new Rca_Restfull_HalResource($league, $leagueId);
+        $clubs = $this->service->getClubs($id);
+        if (!empty($clubs)) {
+            $collection = new Rca_Restfull_HalCollection($clubs);
             $self = new Rca_Restfull_Link('self');
-            $self->setRouteParams(array('id' => $leagueId));
-            $self->setRoute('leagues');
-            $league->getLinks()->add($self);
-            $resource->resource->league = $league;
-            unset($resource->resource->leagueId);
+            $self->setRouteParams(array('leagueId' => $resource->id));
+            $self->setRoute('league_clubs');
+            $collection->getLinks()->add($self);
+            $collection->setCollectionName('clubs');
+            $collection->setCollectionRoute('clubs');
+            $collection->setResourceRoute('clubs');
+            $resource->resource->clubs = $collection;
+//            var_dump($resource);
         }
     }
 }
+

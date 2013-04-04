@@ -30,9 +30,7 @@ class Api_Bootstrap extends Zend_Application_Module_Bootstrap
     	$this->bootstrap('frontController');
     	$frontController = $this->getResource('frontController');
     	$router = $frontController->getRouter();
-    	$router->addRoute(
-		    'clubs',
-		    new Zend_Controller_Router_Route_Regex('api/clubs/(\d+)', array('module' => 'api', 'controller' => 'clubs', 'id' => ''), array(1 => 'id'), 'api/clubs/%s')
-		);
+        $config = new Zend_Config(include dirname(__FILE__) . '/configs/routes.php');
+        $router->addConfig($config);
     }
 }

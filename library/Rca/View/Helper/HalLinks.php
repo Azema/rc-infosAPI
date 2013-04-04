@@ -240,10 +240,13 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
         }
 
         foreach ($resource as $key => $value) {
-            if (!$value instanceof Rca_Restfull_HalResource) {
+            if (!$value instanceof Rca_Restfull_LinkCollectionAwareInterface) {
                 continue;
+            } elseif ($value instanceof Rca_Restfull_HalResource) {
+                $this->extractEmbeddedHalResource($resource, $key, $value);
+            } elseif ($value instanceof Rca_Restfull_HalCollection) {
+                $this->extractEmbeddedHalCollection($resource, $key, $value);
             }
-            $this->extractEmbeddedHalResource($resource, $key, $value);
         }
 
         $resource['_links'] = $links;
@@ -472,6 +475,27 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
             $parent['_embedded'] = array();
         }
         $parent['_embedded'][$key] = $rendered;
+        unset($parent[$key]);
+    }
+
+    /**
+     * Extracts and renders a HalCollection and embeds it in the parent
+     * representation
+     *
+     * Removes the key from the parent representation, and creates a
+     * representation for the key in the _embedded object.
+     *
+     * @param  array $parent
+     * @param  string $key
+     * @param  Rca_Restfull_HalCollection $resource
+     */
+    protected function extractEmbeddedHalCollection(array &$parent, $key, Rca_Restfull_HalCollection $collection)
+    {
+        $rendered = $this->renderCollection($collection);
+        if (!isset($parent['_embedded'])) {
+            $parent['_embedded'] = array();
+        }
+        $parent['_embedded'][$collection->collectionName] = $rendered;
         unset($parent[$key]);
     }
 

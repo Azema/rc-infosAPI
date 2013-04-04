@@ -2,6 +2,9 @@
 
 class Service_Abstract
 {
+	const OPERATOR = 'operator';
+	const VALUE = 'value';
+
 	/**
 	 * Contient les tables DB
 	 *

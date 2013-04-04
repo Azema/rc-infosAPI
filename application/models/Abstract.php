@@ -75,12 +75,10 @@ class Model_Abstract
      */
     public function __set($columnName, $value)
     {
-        if (!array_key_exists($columnName, $this->_data)) {
-            require_once 'Zend/Db/Table/Row/Exception.php';
-            throw new Zend_Db_Table_Row_Exception("Specified column \"$columnName\" is not in the row");
-        }
         $this->_data[$columnName] = $value;
-        $this->_modifiedFields[$columnName] = true;
+        if (array_key_exists($columnName, $this->_data)) {
+            $this->_modifiedFields[$columnName] = true;
+        }
     }
 
     /**

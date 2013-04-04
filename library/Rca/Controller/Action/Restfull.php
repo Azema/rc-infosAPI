@@ -1092,7 +1092,8 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
     protected function injectSelfLink(Rca_Restfull_LinkCollectionAwareInterface $resource)
     {
         $self = new Rca_Restfull_Link('self');
-        $self->setRoute($this->route);
+        $route = $this->getFrontController()->getRouter()->getCurrentRouteName();
+        $self->setRoute($route);
         if ($resource instanceof Rca_Restfull_HalResource) {
             $self->setRouteParams(array('id' => $resource->id));
         }
