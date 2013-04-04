@@ -12,7 +12,7 @@ Elle n'est pour le moment pas encore utilisable en production, mais elle donne u
 Seul la lecture est actuellement pris en compte. Je n'ai pas encore géré l'écriture.
 
 Elle fonctionne avec Zend Framework 1.12.
-La base de données est gérée avec [https://github.com/Azema/Phigrate](Phigrate)
+La base de données est gérée avec [Phigrate](https://github.com/Azema/Phigrate)
 
 J'ai mis en place quelques données pour que l'API puisse servir des informations et pour faire joujou avec.
 
@@ -23,4 +23,5 @@ Prochaines étapes:
 - [ ] Ajouter les pistes des clubs
 - [ ] Ajouter les pilotes
 - [ ] Ajouter les championnats
+- [ ] Ajouter les pages de documentation des ressources
 - [ ] Encore pleins d'autres choses à faire

@@ -2,3 +2,5 @@
 data/logs/*.log
 data/cache/*
 !data/cache/.empty
+vendor/*
+composer.lock
