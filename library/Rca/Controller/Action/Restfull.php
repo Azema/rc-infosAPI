@@ -896,10 +896,12 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
             && !$return instanceof Rca_Restfull_HalResource
             && !$return instanceof Rca_Restfull_HalCollection
         ) {
+            $this->getResponse()->setBody($return);
             return $return;
         }
 
         $this->getResponse()->setBody($this->render($return));
+        $this->getResponse()->setHeader('Content-Type', 'application/hal+json', true);
         // whats actually important here is that this action controller is
         // shutting down, regardless of dispatching; notify the helpers of this
         // state
