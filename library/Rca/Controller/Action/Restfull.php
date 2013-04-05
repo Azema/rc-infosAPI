@@ -260,7 +260,7 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
      */
     public function setCollectionName($name)
     {
-        $this->collectionName = (string) $name;
+        $this->collectionName = (string)$name;
     }
 
     /**
@@ -280,7 +280,7 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
      */
     public function setPageSize($count)
     {
-        $this->pageSize = (int) $count;
+        $this->pageSize = (int)$count;
     }
 
     /**
@@ -939,16 +939,10 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
             $this->setResponse($response);
         }
 
-        /*$action = $request->getActionName();
-        if (empty($action)) {
-            $action = 'index';
-        }
-        $action = $action . 'Action';*/
         $action = '';
 
         $request->setDispatched(true);
         $this->dispatch($action);
-
 
         return $this->getResponse();
     }

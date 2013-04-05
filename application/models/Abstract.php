@@ -2,7 +2,7 @@
 
 class Model_Abstract
 {
-	/**
+    /**
      * The data for each column in the row (column_name => value).
      * The keys must match the physical names of columns in the
      * table for which this row is defined.
@@ -27,6 +27,13 @@ class Model_Abstract
      * @var array
      */
     protected $_modifiedFields = array();
+
+    /**
+     * Définit les propriétés à extraire
+     *
+     * @var array
+     */
+    protected $_extract;
 
     /**
      * Constructor.
@@ -149,37 +156,37 @@ class Model_Abstract
      * @param string $offset
      * @return string
      */
-     public function offsetGet($offset)
-     {
-         return $this->__get($offset);
-     }
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
 
-     /**
-      * Proxy to __set
-      * Required by the ArrayAccess implementation
-      *
-      * @param string $offset
-      * @param mixed $value
-      */
-     public function offsetSet($offset, $value)
-     {
-         $this->__set($offset, $value);
-     }
+    /**
+     * Proxy to __set
+     * Required by the ArrayAccess implementation
+     *
+     * @param string $offset
+     * @param mixed $value
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->__set($offset, $value);
+    }
 
-     /**
-      * Proxy to __unset
-      * Required by the ArrayAccess implementation
-      *
-      * @param string $offset
-      */
-     public function offsetUnset($offset)
-     {
-         return $this->__unset($offset);
-     }
+    /**
+     * Proxy to __unset
+     * Required by the ArrayAccess implementation
+     *
+     * @param string $offset
+     */
+    public function offsetUnset($offset)
+    {
+        return $this->__unset($offset);
+    }
 
     public function getIterator()
     {
-        return new ArrayIterator((array) $this->_data);
+        return new ArrayIterator((array)$this->_data);
     }
 
     /**
@@ -190,6 +197,20 @@ class Model_Abstract
     public function toArray()
     {
         return (array)$this->_data;
+    }
+
+    /**
+     * Extrait les données à afficher
+     *
+     * @return array
+     */
+    public function extract()
+    {
+        $return = $this->toArray();
+        if (isset($this->_extract)) {
+            $return = array_intersect_key($return, $this->_extract);
+        }
+        return $return;
     }
 
     /**
@@ -209,9 +230,14 @@ class Model_Abstract
         return $this;
     }
 
+    /**
+     * Indique si les données du modèle ont été modifiées
+     *
+     * @return boolean
+     */
     public function isModified()
     {
-    	return empty($this->_modifiedFields);
+        return empty($this->_modifiedFields);
     }
 }
 

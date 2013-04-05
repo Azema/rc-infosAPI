@@ -125,7 +125,7 @@ class Rca_Restfull_ApiProblem
      */
     public function setDetailIncludesStackTrace($flag)
     {
-        $this->detailIncludesStackTrace = (bool) $flag;
+        $this->detailIncludesStackTrace = (bool)$flag;
         return $this;
     }
 
