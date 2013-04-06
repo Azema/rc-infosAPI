@@ -508,10 +508,13 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
     protected function convertResourceToArray($resource)
     {
         $hydrator = $this->getHydratorForResource($resource);
-        $methodExists = method_exists($resource, 'toArray');
-        if (!$hydrator && !$methodExists) {
+        $toArrayExists = method_exists($resource, 'toArray');
+        $extractExists = method_exists($resource, 'extract');
+        if (!$hydrator && !$toArrayExists && !$extractExists) {
             return (array)$resource;
-        } elseif ($methodExists) {
+        } elseif ($extractExists) {
+            return $resource->extract();
+        } elseif ($toArrayExists) {
             return $resource->toArray();
         }
 

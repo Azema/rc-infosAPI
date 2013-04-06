@@ -42,7 +42,7 @@ class Rca_View_JsonRenderer
      */
     public function setDisplayExceptions($flag)
     {
-        $this->displayExceptions = (bool) $flag;
+        $this->displayExceptions = (bool)$flag;
         return $this;
     }
 
@@ -82,7 +82,7 @@ class Rca_View_JsonRenderer
         $this->apiProblem = null;
 
         if (!$nameOrModel instanceof Rca_View_JsonModel) {
-            return json_encode($nameOrModel, $values);
+            return json_encode($nameOrModel);
         }
 
         if ($nameOrModel->isApiProblem()) {
@@ -103,7 +103,7 @@ class Rca_View_JsonRenderer
             return json_encode($payload);
         }
 
-        return json_encode($nameOrModel, $values);
+        return json_encode($nameOrModel);
     }
 
     /**

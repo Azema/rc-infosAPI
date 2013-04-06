@@ -2,7 +2,7 @@
 
 class Api_LeaguesController extends Rca_Controller_Action_Restfull
 {
-	public $route = 'leagues';
+    public $route = 'leagues';
 
     public $resource = 'Model_League';
 
@@ -10,7 +10,7 @@ class Api_LeaguesController extends Rca_Controller_Action_Restfull
 
     public function init()
     {
-    	$this->service = new Service_Leagues();
+        $this->service = new Service_Leagues();
         /* Initialize action controller here */
     }
 

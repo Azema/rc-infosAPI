@@ -2,11 +2,15 @@
 
 class Api_ClubsController extends Rca_Controller_Action_Restfull
 {
-	public $route = 'clubs';
+    public $route = 'clubs';
+
+    public $resource = 'Model_Club';
+
+    public $collectionName = 'clubs';
 
     public function init()
     {
-    	$this->service = new Service_Clubs();
+        $this->service = new Service_Clubs();
         /* Initialize action controller here */
     }
 
@@ -27,6 +31,7 @@ class Api_ClubsController extends Rca_Controller_Action_Restfull
 
         try {
             $collection = $this->service->fetchAll($params);
+            $collection = new Zend_Paginator(new Zend_Paginator_Adapter_Array($collection));
         } catch (Exception $e) {
             return new Rca_Restfull_ApiProblem(500, $e);
         }

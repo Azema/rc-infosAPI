@@ -176,7 +176,7 @@ class Rca_Restfull_HalCollection implements Rca_Restfull_LinkCollectionAwareInte
      */
     public function setCollectionName($name)
     {
-        $this->collectionName = (string) $name;
+        $this->collectionName = (string)$name;
         return $this;
     }
 
@@ -188,7 +188,7 @@ class Rca_Restfull_HalCollection implements Rca_Restfull_LinkCollectionAwareInte
      */
     public function setCollectionRoute($route)
     {
-        $this->collectionRoute = (string) $route;
+        $this->collectionRoute = (string)$route;
         return $this;
     }
 
@@ -313,7 +313,7 @@ class Rca_Restfull_HalCollection implements Rca_Restfull_LinkCollectionAwareInte
             ));
         }
 
-        $page = (int) $page;
+        $page = (int)$page;
         if ($page < 1) {
             throw new InvalidArgumentException(sprintf(
                 'Page must be a positive integer; received "%s"',
@@ -341,7 +341,7 @@ class Rca_Restfull_HalCollection implements Rca_Restfull_LinkCollectionAwareInte
             ));
         }
 
-        $size = (int) $size;
+        $size = (int)$size;
         if ($size < 1) {
             throw new InvalidArgumentException(sprintf(
                 'size must be a positive integer; received "%s"',
@@ -373,7 +373,7 @@ class Rca_Restfull_HalCollection implements Rca_Restfull_LinkCollectionAwareInte
      */
     public function setResourceRoute($route)
     {
-        $this->resourceRoute = (string) $route;
+        $this->resourceRoute = (string)$route;
         return $this;
     }
 
