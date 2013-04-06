@@ -64,7 +64,6 @@ class Api_LeaguesController extends Rca_Controller_Action_Restfull
             $collection->setCollectionRoute('clubs');
             $collection->setResourceRoute('clubs');
             $resource->resource->clubs = $collection;
-//            var_dump($resource);
         }
     }
 }

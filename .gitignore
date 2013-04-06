@@ -4,3 +4,4 @@ data/cache/*
 !data/cache/.empty
 vendor/*
 composer.lock
+composer.phar
