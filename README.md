@@ -17,6 +17,12 @@ La base de données est gérée avec [Phigrate](https://github.com/Azema/Phigrat
 
 J'ai mis en place quelques données pour que l'API puisse servir des informations et pour faire joujou avec.
 
+Pour visualiser le résultat sur le browser Chrome, je vous invite à installer les extensions suivantes:
+- [chrome-inline-media-type](https://chrome.google.com/webstore/detail/cgfnklamhhieaepdicnbahkbnolpbdmp)
+- [JSON View](https://chrome.google.com/webstore/detail/chklaanhfefbnpoihckbnefhakgolnmc)
+
+Sinon, vous pouvez réaliser les requêtes avec [cURL](http://curl.haxx.se/).
+
 Prochaines étapes:
 - [ ] Ajouter les tests de la BDD
 - [ ] Ajouter les tests de l'API

@@ -8,6 +8,8 @@ class Api_ClubsController extends Rca_Controller_Action_Restfull
 
     public $collectionName = 'clubs';
 
+    public $pageSize = 5;
+
     public function init()
     {
         $this->service = new Service_Clubs();
@@ -31,23 +33,31 @@ class Api_ClubsController extends Rca_Controller_Action_Restfull
 
         try {
             $collection = $this->service->fetchAll($params);
-            $collection = new Zend_Paginator(new Zend_Paginator_Adapter_Array($collection));
+            //$collection = new Zend_Paginator(new Zend_Paginator_Adapter_Array($collection));
         } catch (Exception $e) {
             return new Rca_Restfull_ApiProblem(500, $e);
+        }
+
+        if (method_exists($this, '_getListPost')) {
+            $collection = $this->_getListPost($params, $collection);
         }
 
         if (!$collection instanceof Rca_Restfull_HalCollection) {
             $collection = new Rca_Restfull_HalCollection($collection);
         }
+
         $this->injectSelfLink($collection);
         $collection->setCollectionRoute($this->route);
         $collection->setResourceRoute($this->route);
-        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPage($this->getParam('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
-
-        if (method_exists($this, '_getListPost')) {
-            $this->_getListPos($params, $collection);
+        $collection->setCollectionRouteOptions(array('page' => 1));
+        if (array_key_exists('leagueId', $params)) {
+            $collection->setCollectionRoute('league_clubs');
+            $collection->setCollectionRouteOptions(
+                array_merge($collection->collectionrouteoptions, array('leagueId' => $params['leagueId']))
+            );
         }
         return $collection;
     }
@@ -56,14 +66,36 @@ class Api_ClubsController extends Rca_Controller_Action_Restfull
     {
         $leagueId = $resource->resource->leagueId;
         $league = $this->service->getLeague($leagueId);
+        $links = $resource->getLinks();
+
         if (!empty($league)) {
-            $league = new Rca_Restfull_HalResource($league, $leagueId);
-            $self = new Rca_Restfull_Link('self');
-            $self->setRouteParams(array('id' => $leagueId));
-            $self->setRoute('leagues');
-            $league->getLinks()->add($self);
-            $resource->resource->league = $league;
+            $link = new Rca_Restfull_Link('league');
+            $link->setRouteParams(array('id' => $leagueId));
+            $link->setRoute('leagues');
+            $links->add($link);
             unset($resource->resource->leagueId);
         }
+        $link = new Rca_Restfull_Link('clubs');
+        $link->setRoute('clubs', array('id' => ''));
+        $links->add($link);
+    }
+
+    protected function _getListPost($params, $collection)
+    {
+        foreach ($collection as $key => $resource) {
+            $leagueId = $resource['leagueId'];
+            unset($resource['leagueId']);
+            $id = $resource['id'];
+            $resource = new Rca_Restfull_HalResource($resource, $id);
+            $links = $resource->getLinks();
+            $selfLink = new Rca_Restfull_Link('self');
+            $selfLink->setRoute($this->route, array('id' => $id));
+            $links->add($selfLink);
+            $link = new Rca_Restfull_Link('league');
+            $link->setRoute('leagues', array('id' => $leagueId));
+            $links->add($link);
+            $collection[$key] = $resource;
+        }
+        return new Zend_Paginator(new Zend_Paginator_Adapter_Array($collection));
     }
 }

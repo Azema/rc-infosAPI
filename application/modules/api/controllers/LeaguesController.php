@@ -53,18 +53,13 @@ class Api_LeaguesController extends Rca_Controller_Action_Restfull
 
     protected function _getPost($id, $resource)
     {
-        $clubs = $this->service->getClubs($id);
-        if (!empty($clubs)) {
-            $collection = new Rca_Restfull_HalCollection($clubs);
-            $self = new Rca_Restfull_Link('self');
-            $self->setRouteParams(array('leagueId' => $resource->id));
-            $self->setRoute('league_clubs');
-            $collection->getLinks()->add($self);
-            $collection->setCollectionName('clubs');
-            $collection->setCollectionRoute('clubs');
-            $collection->setResourceRoute('clubs');
-            $resource->resource->clubs = $collection;
-        }
+        $links = $resource->getLinks();
+        $link = new Rca_Restfull_Link('clubs');
+        $link->setRoute('league_clubs', array('leagueId' => $id));
+        $links->add($link);
+        $link = new Rca_Restfull_Link('leagues');
+        $link->setRoute('leagues', array('id' => ''));
+        $links->add($link);
     }
 }
 

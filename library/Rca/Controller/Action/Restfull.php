@@ -523,9 +523,10 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
         $this->injectSelfLink($collection);
         $collection->setCollectionRoute($this->route);
         $collection->setResourceRoute($this->route);
-        $collection->setPage($this->getRequest()->getQuery('page', 1));
+        $collection->setPage($this->getParam('page', 1));
         $collection->setPageSize($this->pageSize);
         $collection->setCollectionName($this->collectionName);
+        $collection->setCollectionRouteOptions(array('page' => 1));
 
         if (method_exists($this, '_getListPost')) {
             $this->_getListPos($params, $collection);
@@ -1089,6 +1090,7 @@ abstract class Rca_Controller_Action_Restfull extends Zend_Controller_Action
     {
         $self = new Rca_Restfull_Link('self');
         $route = $this->getFrontController()->getRouter()->getCurrentRouteName();
+        //$this->getResponse()->setHeader('route', $route);
         $self->setRoute($route);
         if ($resource instanceof Rca_Restfull_HalResource) {
             $self->setRouteParams(array('id' => $resource->id));

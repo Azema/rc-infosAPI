@@ -80,4 +80,16 @@ class Rca_Restfull_HalResource implements Rca_Restfull_LinkCollectionAwareInterf
         }
         return $this->links;
     }
+
+    public function toArray()
+    {
+        if (is_array($this->resource)) {
+            return $this->resource;
+        } elseif (is_object($this->resource) && method_exists($this->resource, 'extract')) {
+            return $this->resource->extract();
+        } elseif (is_object($this->resource) && method_exists($this->resource, 'toArray')) {
+            return $this->resource->toArray();
+        }
+        return (array)$this->resource;
+    }
 }

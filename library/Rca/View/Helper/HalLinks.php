@@ -203,13 +203,15 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
                 $links = new Rca_Restfull_LinkCollection();
             }
 
-            $selfLink = new Rca_Restfull_Link('self');
-            $selfLink->setRoute(
-                $eventParams['route'],
-                array_merge($eventParams['routeParams'], array('id' => $id)),
-                $eventParams['routeOptions']
-            );
-            $links->add($selfLink);
+            if (!$links->has('self')) {
+                $selfLink = new Rca_Restfull_Link('self');
+                $selfLink->setRoute(
+                    $eventParams['route'],
+                    array_merge($eventParams['routeParams'], array('id' => $id)),
+                    $eventParams['routeOptions']
+                );
+                $links->add($selfLink);
+            }
 
             $resource['_links'] = $this->fromLinkCollection($links);
             $payload['_embedded'][$collectionName][] = $resource;
@@ -369,6 +371,7 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
         if ($page < 1 || $page > $count) {
             return new Rca_Restfull_ApiProblem(409, 'Invalid page provided');
         }
+        $route .= '_paginator';
 
         $links = $halCollection->getLinks();
         $next  = ($page < $count) ? $page + 1 : false;
@@ -378,9 +381,7 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
         $link = new Rca_Restfull_Link('self');
         $link->setRoute($route);
         $link->setRouteParams($params);
-        $link->setRouteOptions(array_merge($options, array(
-            'query' => array('page' => $page))
-        ));
+        $link->setRouteOptions(array_merge($options, array('page' => $page)));
         $links->add($link, true);
 
         // first link
@@ -394,9 +395,7 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
         $link = new Rca_Restfull_Link('last');
         $link->setRoute($route);
         $link->setRouteParams($params);
-        $link->setRouteOptions(array_merge($options, array(
-            'query' => array('page' => $count))
-        ));
+        $link->setRouteOptions(array_merge($options, array('page' => $count)));
         $links->add($link);
 
         // prev link
@@ -404,9 +403,7 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
             $link = new Rca_Restfull_Link('prev');
             $link->setRoute($route);
             $link->setRouteParams($params);
-            $link->setRouteOptions(array_merge($options, array(
-                'query' => array('page' => $prev))
-            ));
+            $link->setRouteOptions(array_merge($options, array('page' => $prev)));
             $links->add($link);
         }
 
@@ -415,9 +412,7 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
             $link = new Rca_Restfull_Link('next');
             $link->setRoute($route);
             $link->setRouteParams($params);
-            $link->setRouteOptions(array_merge($options, array(
-                'query' => array('page' => $next))
-            ));
+            $link->setRouteOptions(array_merge($options, array('page' => $next)));
             $links->add($link);
         }
 
@@ -446,7 +441,11 @@ class Rca_View_Helper_HalLinks extends Zend_View_Helper_Abstract
             );
         }
 
-        $path = $this->urlHelper->url($linkDefinition->getRouteParams(), $linkDefinition->getRoute(), true);
+        $path = $this->urlHelper->url(
+            array_merge($linkDefinition->getRouteParams(), $linkDefinition->getRouteOptions()),
+            $linkDefinition->getRoute(),
+            true
+        );
 
         if (substr($path, 0, 4) == 'http') {
             return $path;
